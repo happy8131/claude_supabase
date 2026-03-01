@@ -1,12 +1,13 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Suspense } from "react";
+import { Suspense } from "react"
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 async function ErrorContent({
   searchParams,
 }: {
-  searchParams: Promise<{ error: string }>;
+  searchParams: Promise<{ error: string }>
 }) {
-  const params = await searchParams;
+  const params = await searchParams
 
   return (
     <>
@@ -20,13 +21,13 @@ async function ErrorContent({
         </p>
       )}
     </>
-  );
+  )
 }
 
 export default function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ error: string }>;
+  searchParams: Promise<{ error: string }>
 }) {
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
@@ -47,5 +48,5 @@ export default function Page({
         </div>
       </div>
     </div>
-  );
+  )
 }

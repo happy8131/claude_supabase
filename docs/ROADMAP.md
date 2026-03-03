@@ -148,9 +148,33 @@
     - 카풀 탭
     - 정산 탭
     - 설정 탭 (주최자만 표시)
-  - 각 탭 내용은 Task 009-012에서 구현
+  - 각 탭 내용은 Task 010-013에서 구현
 
-- **Task 009: 공지 탭 UI (app/protected/events/[eventId]/announcements/)**
+- **Task 009: 관리자 대시보드 페이지 UI (app/protected/dashboard/)**
+  - 파일 구성
+    - `app/protected/dashboard/page.tsx` - 관리자 대시보드 메인 페이지
+    - `components/dashboard/dashboard-stats.tsx` - 통계 카드 컴포넌트
+    - `components/dashboard/event-management-table.tsx` - 이벤트 관리 테이블 컴포넌트
+  - 통계 섹션 (DashboardStats)
+    - 주최한 이벤트 수
+    - 총 참여자 수 (집계)
+    - 진행 중인 이벤트 (scheduled 상태)
+    - 완료된 이벤트 (completed 상태)
+    - 4개 카드 그리드 레이아웃, Tailwind 색상 변화 (파란색/초록색/주황색/보라색)
+  - 빠른 작업 섹션 (Quick Actions)
+    - 새 모임 만들기 버튼 → `/protected/events/new`
+    - 공지사항 작성 버튼 (Phase 4에서 활성화)
+    - 정산 관리 버튼 (Phase 4에서 활성화)
+    - 설정 버튼 (Phase 4에서 활성화)
+  - 이벤트 관리 테이블 (EventManagementTable)
+    - 호스트 이벤트 목록 표시
+    - 컬럼: 이벤트명, 날짜, 참여자 수, 상태, 액션
+    - 상태 배지: scheduled / completed / cancelled
+    - 행 클릭 → 이벤트 상세 페이지
+    - 반응형 레이아웃 (Desktop: Table, Mobile: Card)
+  - 모든 버튼은 동작 없음 (Task 017에서 데이터 연동)
+
+- **Task 010: 공지 탭 UI (app/protected/events/[eventId]/announcements/)**
   - 파일 구성
     - `app/protected/events/[eventId]/announcements/page.tsx` - 공지 탭
     - `components/announcement-card.tsx` - 공지 카드 컴포넌트
@@ -165,7 +189,7 @@
     - 고정 여부 토글
   - 모든 버튼은 동작 없음 (Task 017에서 연결)
 
-- **Task 010: 참여자 관리 탭 UI (app/protected/events/[eventId]/members/)**
+- **Task 011: 참여자 관리 탭 UI (app/protected/events/[eventId]/members/)**
   - 파일 구성
     - `app/protected/events/[eventId]/members/page.tsx` - 참여자 탭
     - `components/member-list.tsx` - 참여자 목록 컴포넌트
@@ -176,7 +200,7 @@
   - 주최자 외 접근 시 권한 오류 메시지 표시
   - 모든 버튼은 동작 없음
 
-- **Task 011: 카풀 탭 UI (app/protected/events/[eventId]/carpool/)**
+- **Task 013: 카풀 탭 UI (app/protected/events/[eventId]/carpool/)**
   - 파일 구성
     - `app/protected/events/[eventId]/carpool/page.tsx` - 카풀 탭
     - `components/carpool-group.tsx` - 카풀 그룹 카드 컴포넌트
@@ -194,7 +218,7 @@
   - 매칭 처리 버튼 (주최자만, 더미 상태)
   - 모든 버튼은 동작 없음
 
-- **Task 012: 정산 탭 UI (app/protected/events/[eventId]/settlement/)**
+- **Task 014: 정산 탭 UI (app/protected/events/[eventId]/settlement/)**
   - 파일 구성
     - `app/protected/events/[eventId]/settlement/page.tsx` - 정산 탭
     - `components/settlement-item-form.tsx` - 비용 항목 추가 폼
@@ -216,7 +240,7 @@
 
 UI/UX 검증을 마친 후 데이터베이스 기반을 구축합니다.
 
-- **Task 013: Supabase 테이블 마이그레이션** - 우선순위
+- **Task 015: Supabase 테이블 마이그레이션** - 우선순위
   - Supabase SQL Editor에서 다음 8개 테이블 생성
     - `events` (이벤트): id, host_id, title, description, event_date, location, max_members, require_approval, share_token, status, created_at
     - `event_members` (참여자): id, event_id, user_id, status, joined_at
@@ -235,7 +259,7 @@ UI/UX 검증을 마친 후 데이터베이스 기반을 구축합니다.
     - carpool_passenger_status: 'pending' | 'matched' | 'cancelled'
     - payment_status: 'unpaid' | 'paid'
 
-- **Task 014: Row Level Security(RLS) 정책 설정** - 우선순위
+- **Task 016: Row Level Security(RLS) 정책 설정** - 우선순위
   - 모든 신규 테이블에 RLS 활성화
   - `events` 테이블 RLS
     - SELECT: 인증 사용자만 / published 상태 이벤트는 비인증도 허용
@@ -257,7 +281,7 @@ UI/UX 검증을 마친 후 데이터베이스 기반을 구축합니다.
     - SELECT: 해당 이벤트 승인된 참여자 + 주최자
     - INSERT/UPDATE/DELETE: 주최자만 (settlement_payments는 UPDATE에서 본인도 가능)
 
-- **Task 015: TypeScript 타입 업데이트** - 우선순위
+- **Task 017: TypeScript 타입 업데이트** - 우선순위
   - `types/database.ts` 파일에 신규 테이블 타입 추가
     - 각 테이블의 Row/Insert/Update 타입
     - ENUM 타입 정의 (Enums 섹션)
@@ -277,7 +301,7 @@ UI/UX 검증을 마친 후 데이터베이스 기반을 구축합니다.
 
 이제 UI에 실제 데이터베이스를 연결하고 비즈니스 로직을 구현합니다.
 
-- **Task 016: 이벤트 생성/수정/참여 Server Actions 구현**
+- **Task 018: 이벤트 생성/수정/참여 Server Actions 구현**
   - 파일 구성
     - `app/protected/events/new/actions.ts`
     - `app/protected/events/[eventId]/edit/actions.ts`
@@ -296,7 +320,7 @@ UI/UX 검증을 마친 후 데이터베이스 기반을 구축합니다.
   - [ ] Playwright: 자동 승인 이벤트 vs 승인 필요 이벤트 동작 확인
   - [ ] Playwright: 정원 초과 시 waitlisted 처리
 
-- **Task 017: 대시보드 & 모든 탭 데이터 연동**
+- **Task 019: 대시보드 & 모든 탭 데이터 연동**
   - `app/protected/page.tsx` 업데이트
     - Supabase 쿼리로 실제 이벤트 목록 로드
     - 더미 데이터 제거
@@ -315,7 +339,7 @@ UI/UX 검증을 마친 후 데이터베이스 기반을 구축합니다.
   - [ ] Playwright: 정산 항목 추가, 1/N 계산, 납부 처리
   - [ ] Playwright: 권한 검증 (주최자만 가능한 기능 확인)
 
-- **Task 018: 프로필 업데이트 & 전반적인 UX 개선**
+- **Task 020: 프로필 업데이트 & 전반적인 UX 개선**
   - `app/protected/profile/page.tsx` 업데이트
     - full_name, username 필수로 강조
     - Server Action: updateProfile
@@ -362,53 +386,58 @@ app/
 │   └── share/
 │       └── [token]/
 │           ├── page.tsx                        # 공개 이벤트 상세 (Task 007)
-│           └── actions.ts                      # 참여 신청 Server Action (Task 016)
+│           └── actions.ts                      # 참여 신청 Server Action (Task 018)
 └── protected/
     ├── layout.tsx                              # 네비게이션 (Task 004)
-    ├── page.tsx                                # 대시보드 (Task 003, 017)
+    ├── page.tsx                                # 대시보드 (Task 003, 019)
+    ├── dashboard/
+    │   └── page.tsx                            # 관리자 대시보드 (Task 009)
     ├── profile/
-    │   ├── page.tsx                            # 프로필 페이지 (Task 018)
+    │   ├── page.tsx                            # 프로필 페이지 (Task 020)
     │   └── actions.ts
     └── events/
         ├── new/
         │   ├── page.tsx                        # 이벤트 생성 (Task 005)
-        │   └── actions.ts                      # 이벤트 생성 Server Action (Task 016)
+        │   └── actions.ts                      # 이벤트 생성 Server Action (Task 018)
         └── [eventId]/
             ├── layout.tsx                      # 이벤트 헤더 (Task 008)
             ├── page.tsx                        # 이벤트 허브 탭 셸 (Task 008)
             ├── edit/
             │   ├── page.tsx                    # 이벤트 수정 (Task 006)
-            │   └── actions.ts                  # 이벤트 수정 Server Action (Task 016)
+            │   └── actions.ts                  # 이벤트 수정 Server Action (Task 018)
             ├── members/
-            │   ├── page.tsx                    # 참여자 탭 (Task 010)
-            │   └── actions.ts                  # 참여자 관리 Server Actions (Task 017)
+            │   ├── page.tsx                    # 참여자 탭 (Task 011)
+            │   └── actions.ts                  # 참여자 관리 Server Actions (Task 019)
             ├── announcements/
-            │   ├── page.tsx                    # 공지 탭 (Task 009)
-            │   └── actions.ts                  # 공지 Server Actions (Task 017)
+            │   ├── page.tsx                    # 공지 탭 (Task 010)
+            │   └── actions.ts                  # 공지 Server Actions (Task 019)
             ├── carpool/
-            │   ├── page.tsx                    # 카풀 탭 (Task 011)
-            │   └── actions.ts                  # 카풀 Server Actions (Task 017)
+            │   ├── page.tsx                    # 카풀 탭 (Task 012)
+            │   └── actions.ts                  # 카풀 Server Actions (Task 019)
             └── settlement/
-                ├── page.tsx                    # 정산 탭 (Task 012)
-                └── actions.ts                  # 정산 Server Actions (Task 017)
+                ├── page.tsx                    # 정산 탭 (Task 013)
+                └── actions.ts                  # 정산 Server Actions (Task 019)
 
 types/
-└── database.ts                                 # DB 타입 (Task 015)
+└── database.ts                                 # DB 타입 (Task 017)
 
 components/
+├── dashboard/
+│   ├── dashboard-stats.tsx                    # 통계 카드 (Task 009)
+│   └── event-management-table.tsx             # 이벤트 관리 테이블 (Task 009)
 ├── events/
 │   ├── event-card.tsx                         # 이벤트 카드 (Task 003)
 │   ├── event-form.tsx                         # 이벤트 폼 (Task 005, 006)
 │   ├── event-header.tsx                       # 이벤트 헤더 (Task 008)
-│   ├── announcement-card.tsx                  # 공지 카드 (Task 009)
-│   ├── announcement-form.tsx                  # 공지 폼 (Task 009)
-│   ├── member-list.tsx                        # 참여자 목록 (Task 010)
-│   ├── carpool-group.tsx                      # 카풀 그룹 (Task 011)
-│   ├── carpool-driver-form.tsx                # 운전자 폼 (Task 011)
-│   ├── carpool-passenger-form.tsx             # 탑승 폼 (Task 011)
-│   ├── settlement-item-form.tsx               # 항목 폼 (Task 012)
-│   ├── settlement-summary.tsx                 # 정산 요약 (Task 012)
-│   └── payment-status-table.tsx               # 납부 현황 (Task 012)
+│   ├── announcement-card.tsx                  # 공지 카드 (Task 010)
+│   ├── announcement-form.tsx                  # 공지 폼 (Task 010)
+│   ├── member-list.tsx                        # 참여자 목록 (Task 011)
+│   ├── carpool-group.tsx                      # 카풀 그룹 (Task 012)
+│   ├── carpool-driver-form.tsx                # 운전자 폼 (Task 012)
+│   ├── carpool-passenger-form.tsx             # 탑승 폼 (Task 012)
+│   ├── settlement-item-form.tsx               # 항목 폼 (Task 013)
+│   ├── settlement-summary.tsx                 # 정산 요약 (Task 013)
+│   └── payment-status-table.tsx               # 납부 현황 (Task 013)
 
 proxy.ts                                        # 공개 경로 설정 (Task 001)
 ```
@@ -427,22 +456,23 @@ proxy.ts                                        # 공개 경로 설정 (Task 001
 | Phase 2 | Task 006 | 이벤트 수정 페이지 UI                | 미완료 |
 | Phase 2 | Task 007 | 공개 이벤트 상세 페이지 UI           | 미완료 |
 | Phase 2 | Task 008 | 이벤트 허브 셸                       | 미완료 |
-| Phase 2 | Task 009 | 공지 탭 UI                           | 미완료 |
-| Phase 2 | Task 010 | 참여자 관리 탭 UI                    | 미완료 |
-| Phase 2 | Task 011 | 카풀 탭 UI                           | 미완료 |
-| Phase 2 | Task 012 | 정산 탭 UI                           | 미완료 |
-| Phase 3 | Task 013 | Supabase 테이블 마이그레이션         | 미완료 |
-| Phase 3 | Task 014 | RLS 정책 설정                        | 미완료 |
-| Phase 3 | Task 015 | TypeScript 타입 업데이트             | 미완료 |
-| Phase 4 | Task 016 | 이벤트 생성/수정/참여 Server Actions | 미완료 |
-| Phase 4 | Task 017 | 모든 탭 데이터 연동                  | 미완료 |
-| Phase 4 | Task 018 | 프로필 & UX 개선                     | 미완료 |
+| Phase 2 | Task 009 | 관리자 대시보드 페이지 UI            | 미완료 |
+| Phase 2 | Task 010 | 공지 탭 UI                           | 미완료 |
+| Phase 2 | Task 011 | 참여자 관리 탭 UI                    | 미완료 |
+| Phase 2 | Task 012 | 카풀 탭 UI                           | 미완료 |
+| Phase 2 | Task 013 | 정산 탭 UI                           | 미완료 |
+| Phase 3 | Task 015 | Supabase 테이블 마이그레이션         | 미완료 |
+| Phase 3 | Task 016 | RLS 정책 설정                        | 미완료 |
+| Phase 3 | Task 017 | TypeScript 타입 업데이트             | 미완료 |
+| Phase 4 | Task 018 | 이벤트 생성/수정/참여 Server Actions | 미완료 |
+| Phase 4 | Task 019 | 모든 탭 데이터 연동                  | 미완료 |
+| Phase 4 | Task 020 | 프로필 & UX 개선                     | 미완료 |
 
 ---
 
 ## 개발 완료 기준
 
-모든 18개 Task가 완료되고 다음을 만족할 때:
+모든 20개 Task가 완료되고 다음을 만족할 때:
 
 - ✅ 모든 페이지가 반응형 디자인 적용
 - ✅ 모든 기능이 Server Actions으로 구현

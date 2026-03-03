@@ -60,7 +60,7 @@ export function EventManagementTable({ events }: EventManagementTableProps) {
                   })}
                 </td>
                 <td className="px-6 py-4 text-sm">
-                  {event.members?.length || 1}명
+                  {event.participantCount || 1}명
                 </td>
                 <td className="px-6 py-4">
                   <Badge variant={statusConfig[event.status].variant}>
@@ -105,7 +105,7 @@ export function EventManagementTable({ events }: EventManagementTableProps) {
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">
-                    {event.members?.length || 1}명 참여
+                    {event.participantCount || 1}명 참여
                   </span>
                   <Eye className="w-4 h-4 text-muted-foreground" />
                 </div>

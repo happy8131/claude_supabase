@@ -12,7 +12,7 @@ export default function DashboardPage() {
   // 통계 계산
   const hostedEventsCount = hostedEvents.length
   const participantsCount = hostedEvents.reduce(
-    (sum, event) => sum + (event.members?.length || 1),
+    (sum, event) => sum + (event.participantCount || 1),
     0,
   )
   const ongoingCount = hostedEvents.filter(

@@ -14,10 +14,12 @@ export default async function EventLayout({
 }: EventLayoutProps) {
   const { eventId } = await params
 
-  // eventId에 해당하는 이벤트 찾기 (호스트 이벤트 우선, 없으면 참여 이벤트)
-  const event =
-    dummyEvents.hostedEvents.find((e) => e.id === eventId) ||
-    dummyEvents.participatedEvents.find((e) => e.id === eventId)
+  // eventId에 해당하는 이벤트 찾기
+  const hostedEvent = dummyEvents.hostedEvents.find((e) => e.id === eventId)
+  const participatedEvent = dummyEvents.participatedEvents.find(
+    (e) => e.id === eventId,
+  )
+  const event = hostedEvent || participatedEvent
 
   if (!event) {
     return (
@@ -30,9 +32,12 @@ export default async function EventLayout({
     )
   }
 
+  // 주최자 여부 판단 (호스트 이벤트 목록에 있으면 주최자)
+  const isHost = !!hostedEvent
+
   return (
     <div className="space-y-6">
-      <EventHeader event={event} />
+      <EventHeader event={event} isHost={isHost} />
       {children}
     </div>
   )

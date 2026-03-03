@@ -1,22 +1,30 @@
 "use client"
 
+import { Calendar, Copy, Edit2, MapPin, Trash2 } from "lucide-react"
+import Link from "next/link"
+import { useState } from "react"
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Event } from "@/lib/dummy-data"
-import { Calendar, Copy, MapPin } from "lucide-react"
-import { useState } from "react"
 
 interface EventHeaderProps {
   event: Event
+  isHost?: boolean
 }
 
-export function EventHeader({ event }: EventHeaderProps) {
+export function EventHeader({ event, isHost = false }: EventHeaderProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopyLink = () => {
     // 더미: 단순히 복사됨 표시
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleDelete = () => {
+    // TODO(Phase 4): 이벤트 삭제 Server Action 연결
+    console.log("Delete event:", event.id)
   }
 
   const statusConfig = {
@@ -55,16 +63,40 @@ export function EventHeader({ event }: EventHeaderProps) {
         </div>
       </div>
 
-      {/* 공유 버튼 */}
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handleCopyLink}
-        className="gap-2"
-      >
-        <Copy className="w-4 h-4" />
-        {copied ? "복사됨!" : "공유 링크 복사"}
-      </Button>
+      {/* 버튼 그룹 */}
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleCopyLink}
+          className="gap-2"
+        >
+          <Copy className="w-4 h-4" />
+          {copied ? "복사됨!" : "공유 링크 복사"}
+        </Button>
+
+        {/* 주최자 전용 버튼 */}
+        {isHost && (
+          <>
+            <Link href={`/protected/events/${event.id}/edit`}>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Edit2 className="w-4 h-4" />
+                수정
+              </Button>
+            </Link>
+
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleDelete}
+              className="gap-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              삭제
+            </Button>
+          </>
+        )}
+      </div>
     </div>
   )
 }

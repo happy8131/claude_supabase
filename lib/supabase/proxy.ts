@@ -3,6 +3,18 @@ import { type NextRequest, NextResponse } from "next/server"
 
 import { hasEnvVars } from "../utils"
 
+// 공개 경로 목록 (비인증 사용자도 접근 가능)
+const PUBLIC_PATHS: readonly string[] = ["/auth", "/events/share"]
+
+/**
+ * 공개 경로 확인
+ * @param pathname 요청 경로
+ * @returns 공개 경로 여부
+ */
+function isPublicPath(pathname: string): boolean {
+  return PUBLIC_PATHS.some((path) => pathname.startsWith(path))
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -51,10 +63,9 @@ export async function updateSession(request: NextRequest) {
   if (
     request.nextUrl.pathname !== "/" &&
     !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
+    !isPublicPath(request.nextUrl.pathname)
   ) {
-    // no user, potentially respond by redirecting the user to the login page
+    // 비인증 사용자이며 공개 경로가 아닌 경우 로그인 페이지로 리다이렉트
     const url = request.nextUrl.clone()
     url.pathname = "/auth/login"
     return NextResponse.redirect(url)

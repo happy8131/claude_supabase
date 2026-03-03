@@ -98,3 +98,29 @@ export const dummyEvents = {
     },
   ] as Event[],
 }
+
+// 사용자 프로필 타입
+export interface UserProfile {
+  id: string
+  email: string
+  displayName: string
+  bio?: string
+  region?: string
+  birthDate?: string
+  joinedDate: string
+  hostedEventCount: number
+  participatedEventCount: number
+}
+
+// 더미 사용자 프로필
+export const dummyProfile: UserProfile = {
+  id: "user-1",
+  email: "park.minjun@example.com",
+  displayName: "박민준",
+  bio: "모임을 통해 새로운 사람들을 만나고 다양한 경험을 공유하는 것을 좋아합니다. 수영과 헬스에 관심이 많아요!",
+  region: "서울 강남구",
+  birthDate: "1995-07-15",
+  joinedDate: "2025-06-01",
+  hostedEventCount: 4,
+  participatedEventCount: 3,
+}

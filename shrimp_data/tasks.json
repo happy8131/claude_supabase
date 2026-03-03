@@ -1,442 +1,69 @@
 {
   "tasks": [
     {
-      "id": "49d10911-3da0-440d-a809-c5731336c5e8",
-      "name": "Task 001-A: 공개 경로 상수 및 헬퍼 함수 정의",
-      "description": "lib/supabase/proxy.ts에서 공개 경로를 관리하기 위한 상수 배열과 헬퍼 함수 작성. PUBLIC_PATHS 배열에 /auth, /events/share 경로 정의. isPublicPath(pathname: string) 함수 작성하여 경로 확인 로직 구현.",
-      "notes": "startsWith() 사용으로 /events/share와 /events/share/[token] 모두 매칭됨",
-      "status": "pending",
+      "id": "0cb4fa56-be05-4cdc-9487-b1212f020c98",
+      "name": "EventTabNavigation 컴포넌트 생성 및 layout.tsx 수정",
+      "description": "탭 네비게이션을 공유 컴포넌트로 분리하고, layout.tsx에 통합하여 모든 nested route에서 동일한 탭 UI를 표시합니다. usePathname()으로 현재 활성 탭을 식별하고, isHost prop으로 주최자 전용 탭을 조건부 렌더링합니다.",
+      "notes": "EventHeader와 EventTabNavigation을 분리해서 layout에서 순차적으로 렌더링. Tailwind CSS의 동적 클래스 주의 (pre-computed 필요시 className 배열 활용)",
+      "status": "completed",
       "dependencies": [],
-      "createdAt": "2026-03-03T07:39:30.607Z",
-      "updatedAt": "2026-03-03T07:39:30.607Z",
+      "createdAt": "2026-03-03T15:25:24.738Z",
+      "updatedAt": "2026-03-03T15:26:06.319Z",
       "relatedFiles": [
         {
-          "path": "lib/supabase/proxy.ts",
-          "type": "TO_MODIFY",
-          "description": "공개 경로 상수 및 헬퍼 함수 추가",
-          "lineStart": 1,
-          "lineEnd": 10
-        }
-      ],
-      "implementationGuide": "lib/supabase/proxy.ts 파일 상단에 다음을 추가:\\n1. const PUBLIC_PATHS: readonly string[] = ['/auth', '/events/share'] 정의\\n2. function isPublicPath(pathname: string): boolean 함수 작성\\n3. 함수는 pathname.startsWith() 사용하여 매칭\\n4. JSDoc 주석 추가",
-      "verificationCriteria": "1. PUBLIC_PATHS 배열 정의됨\\n2. isPublicPath() 함수 구현됨\\n3. TypeScript 컴파일 성공\\n4. ESLint 통과",
-      "analysisResult": "Task 001 완료 후: lib/supabase/proxy.ts에서 PUBLIC_PATHS 배열과 isPublicPath 함수가 정의됨. updateSession에서 공개 경로 체크 로직이 /events/share를 포함하도록 수정됨. 기존 인증 플로우와 getClaims 호출은 변경 없음. TypeScript 컴파일 및 ESLint 통과. Task 007(공개 이벤트 상세 페이지)의 전제조건 충족."
-    },
-    {
-      "id": "53fc7f08-4d68-49bd-b4e2-36b81a37fc8f",
-      "name": "Task 001-B: updateSession 함수 로직 수정",
-      "description": "updateSession 함수에서 공개 경로 체크 로직을 isPublicPath() 헬퍼로 대체. 기존 /login, /auth 체크를 제거하고 /events/share 경로도 포함.",
-      "notes": "getClaims() 호출 순서 변경 금지. 세션 관리 정확성 유지",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "49d10911-3da0-440d-a809-c5731336c5e8"
-        }
-      ],
-      "createdAt": "2026-03-03T07:39:30.607Z",
-      "updatedAt": "2026-03-03T07:39:30.607Z",
-      "relatedFiles": [
-        {
-          "path": "lib/supabase/proxy.ts",
-          "type": "TO_MODIFY",
-          "description": "공개 경로 체크 로직 수정",
-          "lineStart": 51,
-          "lineEnd": 61
-        }
-      ],
-      "implementationGuide": "lib/supabase/proxy.ts의 updateSession 함수 51-61번 라인 수정:\\n\\n현재: !request.nextUrl.pathname.startsWith('/login') && !request.nextUrl.pathname.startsWith('/auth')\\n\\n변경: !isPublicPath(request.nextUrl.pathname)\\n\\ngetClaims() 호출과 쿠키 관리는 유지",
-      "verificationCriteria": "1. 리다이렉트 조건이 isPublicPath() 사용\\n2. /events/share에서 비인증 사용자 리다이렉트 안 됨\\n3. /auth는 비인증만 접근 가능\\n4. TypeScript 컴파일 성공\\n5. ESLint 통과",
-      "analysisResult": "Task 001 완료 후: lib/supabase/proxy.ts에서 PUBLIC_PATHS 배열과 isPublicPath 함수가 정의됨. updateSession에서 공개 경로 체크 로직이 /events/share를 포함하도록 수정됨. 기존 인증 플로우와 getClaims 호출은 변경 없음. TypeScript 컴파일 및 ESLint 통과. Task 007(공개 이벤트 상세 페이지)의 전제조건 충족."
-    },
-    {
-      "id": "cf1db824-7f7e-4d3d-8801-cab6f1c68efb",
-      "name": "Task 001-C: 패턴 검증 및 테스트",
-      "description": "proxy.ts matcher 패턴이 /events/share 경로를 제대로 캡처하는지 검증. npm run dev로 개발 서버 시작 후 라우팅 동작 확인.",
-      "notes": "proxy.ts의 matcher는 현재 상태가 적절함. updateSession에서 isPublicPath로 필터링",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "53fc7f08-4d68-49bd-b4e2-36b81a37fc8f"
-        }
-      ],
-      "createdAt": "2026-03-03T07:39:30.607Z",
-      "updatedAt": "2026-03-03T07:39:30.607Z",
-      "relatedFiles": [
-        {
-          "path": "proxy.ts",
-          "type": "REFERENCE",
-          "description": "matcher 패턴 검증",
-          "lineStart": 9,
-          "lineEnd": 21
-        }
-      ],
-      "implementationGuide": "1. 프로젝트 루트 proxy.ts의 matcher 검토 (수정 불필요)\\n2. matcher가 정적 파일만 제외하는지 확인\\n3. npm run dev 실행\\n4. 브라우저에서 /events/share/test 경로 접근 시 404 (페이지 없음) 나오는지 확인\\n5. 인증 중단 없음 확인",
-      "verificationCriteria": "1. 프로젝트 루트 proxy.ts의 matcher가 /events/share 캡처\\n2. 개발 서버 정상 실행\\n3. 비인증 사용자가 /events/share 경로 접근 가능\\n4. 로그인 리다이렉트 없음",
-      "analysisResult": "Task 001 완료 후: lib/supabase/proxy.ts에서 PUBLIC_PATHS 배열과 isPublicPath 함수가 정의됨. updateSession에서 공개 경로 체크 로직이 /events/share를 포함하도록 수정됨. 기존 인증 플로우와 getClaims 호출은 변경 없음. TypeScript 컴파일 및 ESLint 통과. Task 007(공개 이벤트 상세 페이지)의 전제조건 충족."
-    },
-    {
-      "id": "65881aab-5ab2-4250-b16c-fcdc7013473f",
-      "name": "Task 003-A: EventCard 컴포넌트 구현",
-      "description": "재사용 가능한 EventCard 컴포넌트 생성. 이벤트 기본 정보(제목, 날짜, 장소, 참여자 수, 상태)를 표시. Tailwind CSS와 shadcn/ui 스타일 사용.",
-      "notes": "링크 동작 없음 (onclick 제거). Task 016에서 /protected/events/[eventId]로 연결 예정",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2026-03-03T07:39:48.108Z",
-      "updatedAt": "2026-03-03T07:39:48.108Z",
-      "relatedFiles": [
-        {
-          "path": "components/events/event-card.tsx",
+          "path": "components/events/event-tab-navigation.tsx",
           "type": "CREATE",
-          "description": "EventCard 컴포넌트 신규 생성"
-        }
-      ],
-      "implementationGuide": "1. 파일 생성: components/events/event-card.tsx\\n2. Props 타입 정의:\\n   - id: string\\n   - title: string\\n   - date: string (ISO 형식)\\n   - location: string\\n   - participantCount: number\\n   - maxMembers?: number\\n   - status: 'scheduled' | 'completed' | 'cancelled'\\n3. 컴포넌트 구조:\\n   - 카드 컨테이너 (Card from shadcn)\\n   - 제목 (h3)\\n   - 날짜/장소 정보 (flex + 아이콘)\\n   - 참여자 수 표시\\n   - 상태 배지 (Badge)\\n4. 상태별 배지 색상:\\n   - scheduled: 파란색\\n   - completed: 초록색\\n   - cancelled: 회색\\n5. 반응형: 모바일/데스크톱 모두 지원",
-      "verificationCriteria": "1. EventCard 컴포넌트 파일 생성됨\\n2. Props 타입 정의 명확\\n3. Tailwind CSS로 스타일 적용\\n4. 상태별 배지 색상 다름\\n5. TypeScript 컴파일 성공\\n6. ESLint 통과",
-      "analysisResult": "Task 003 완료 후: app/protected/page.tsx가 더미 데이터 기반 대시보드로 구현됨. EventCard 컴포넌트가 생성되어 재사용 가능. 모든 UI 요소가 Tailwind CSS와 shadcn/ui로 스타일링됨. Task 004(네비게이션 업데이트)와 Task 016(실제 데이터 연동)의 기초 제공."
-    },
-    {
-      "id": "2bb9a700-7495-4b9a-a56f-0f0f2af1d02a",
-      "name": "Task 003-B: 대시보드 더미 데이터 준비",
-      "description": "대시보드에 사용할 더미 이벤트 데이터 생성. 주최 이벤트와 참여 이벤트 샘플 데이터.",
-      "notes": "Task 017에서 실제 DB 데이터로 교체될 예정",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2026-03-03T07:39:48.108Z",
-      "updatedAt": "2026-03-03T07:39:48.108Z",
-      "relatedFiles": [
-        {
-          "path": "lib/dummy-data.ts",
-          "type": "CREATE",
-          "description": "더미 데이터 파일 신규 생성"
-        }
-      ],
-      "implementationGuide": "1. lib/dummy-data.ts 파일 생성\\n2. 더미 데이터 구조:\\n   - hostedEvents: Event[] (4개)\\n   - participatedEvents: Event[] (3개)\\n3. 각 이벤트 객체:\\n   - id, title, date, location, participantCount, maxMembers, status\\n4. 다양한 상태 포함:\\n   - scheduled 2개\\n   - completed 2개\\n   - cancelled 1개\\n5. 현실적인 데이터 (날짜는 현재 기준)\\n6. TypeScript 타입 지정\\n\\nExample:\\nexport const dummyEvents = { hostedEvents: [...], participatedEvents: [...] }",
-      "verificationCriteria": "1. lib/dummy-data.ts 파일 생성\\n2. hostedEvents 최소 3개\\n3. participatedEvents 최소 2개\\n4. 다양한 상태 포함\\n5. TypeScript 타입 명확\\n6. export const로 접근 가능",
-      "analysisResult": "Task 003 완료 후: app/protected/page.tsx가 더미 데이터 기반 대시보드로 구현됨. EventCard 컴포넌트가 생성되어 재사용 가능. 모든 UI 요소가 Tailwind CSS와 shadcn/ui로 스타일링됨. Task 004(네비게이션 업데이트)와 Task 016(실제 데이터 연동)의 기초 제공."
-    },
-    {
-      "id": "43fe466f-9c69-4398-9743-221845d7ef93",
-      "name": "Task 003-C: 대시보드 페이지 UI 구현",
-      "description": "app/protected/page.tsx를 대시보드로 재작성. 더미 데이터 기반 UI 구현. EventCard 컴포넌트 사용.",
-      "notes": "실제 데이터 조회 없음. Task 017에서 Supabase 쿼리 추가",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "65881aab-5ab2-4250-b16c-fcdc7013473f"
+          "description": "탭 네비게이션 컴포넌트"
         },
-        {
-          "taskId": "2bb9a700-7495-4b9a-a56f-0f0f2af1d02a"
-        }
-      ],
-      "createdAt": "2026-03-03T07:39:48.108Z",
-      "updatedAt": "2026-03-03T07:39:48.108Z",
-      "relatedFiles": [
-        {
-          "path": "app/protected/page.tsx",
-          "type": "TO_MODIFY",
-          "description": "대시보드 페이지 전체 재작성"
-        },
-        {
-          "path": "components/events/event-card.tsx",
-          "type": "DEPENDENCY",
-          "description": "EventCard 컴포넌트 사용"
-        },
-        {
-          "path": "lib/dummy-data.ts",
-          "type": "DEPENDENCY",
-          "description": "더미 데이터 import"
-        }
-      ],
-      "implementationGuide": "1. app/protected/page.tsx 전체 교체\\n2. 페이지 구조:\\n   - 'new 모임 만들기' 버튼 (상단 우측)\\n   - '내가 만든 이벤트' 섹션\\n   - '내가 참여한 이벤트' 섹션\\n3. 각 섹션:\\n   - 제목 (h2)\\n   - 이벤트 카드 그리드 (grid-cols-1 md:grid-cols-2)\\n   - 빈 상태: 이벤트 없을 때 '아직 이벤트가 없습니다' 메시지\\n4. 버튼 동작:\\n   - '새 모임 만들기': onclick 없음 (Task 005에서 연결)\\n   - EventCard: onclick 없음\\n5. import dummyEvents from lib/dummy-data\\n6. 서버 컴포넌트\\n\\nNote: 'use client' 없음 (더미 데이터만 사용하므로 서버 컴포넌트 가능)",
-      "verificationCriteria": "1. app/protected/page.tsx 전체 재작성됨\\n2. '새 모임 만들기' 버튼 표시\\n3. 두 섹션(만든 이벤트, 참여 이벤트) 표시\\n4. 각 섹션에 EventCard 그리드\\n5. 빈 상태 메시지 표시\\n6. TypeScript 컴파일 성공\\n7. ESLint 통과\\n8. npm run dev에서 렌더링 정상",
-      "analysisResult": "Task 003 완료 후: app/protected/page.tsx가 더미 데이터 기반 대시보드로 구현됨. EventCard 컴포넌트가 생성되어 재사용 가능. 모든 UI 요소가 Tailwind CSS와 shadcn/ui로 스타일링됨. Task 004(네비게이션 업데이트)와 Task 016(실제 데이터 연동)의 기초 제공."
-    },
-    {
-      "id": "e627e095-a286-483d-8fa1-47c5865ceff9",
-      "name": "Task 004-A: 네비게이션 헤더 개선",
-      "description": "app/protected/layout.tsx에서 네비게이션 헤더 업데이트. 서비스명 변경, DeployButton 제거, 메뉴 구조 정리.",
-      "notes": "우측 메뉴(프로필, 로그아웃)는 AuthButton 컴포넌트에서 처리. 네비게이션에서는 AuthButton만 표시.",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2026-03-03T07:40:03.221Z",
-      "updatedAt": "2026-03-03T07:40:03.221Z",
-      "relatedFiles": [
-        {
-          "path": "app/protected/layout.tsx",
-          "type": "TO_MODIFY",
-          "description": "네비게이션 헤더 수정 (line 17-34)",
-          "lineStart": 17,
-          "lineEnd": 34
-        }
-      ],
-      "implementationGuide": "1. app/protected/layout.tsx 네비게이션 섹션 수정 (line 18-34)\\n2. 변경 사항:\\n   - 서비스명: 'Next.js Supabase Starter' → '모임 이벤트 관리'\\n   - DeployButton 제거\\n   - 좌측: 서비스명 + 홈 링크\\n   - 우측: AuthButton (유지)\\n3. 레이아웃:\\n   - flex justify-between items-center\\n   - 좌측: logo + home 링크\\n   - 우측: AuthButton\\n4. 스타일: 기존 Tailwind 유지",
-      "verificationCriteria": "1. 서비스명이 '모임 이벤트 관리'로 변경됨\\n2. DeployButton 제거됨\\n3. AuthButton 유지\\n4. 헤더 레이아웃 유지\\n5. TypeScript 컴파일 성공\\n6. ESLint 통과",
-      "analysisResult": "Task 004 완료 후: app/protected/layout.tsx가 프로덕션 수준의 깔끔한 네비게이션으로 업데이트됨. 서비스명이 '모임 이벤트 관리'로 변경되고, 스타터 컴포넌트가 제거됨. 대시보드와 일관된 레이아웃 제공. Task 005(이벤트 생성 페이지)의 기초 제공."
-    },
-    {
-      "id": "a4952392-d4db-498f-871d-dbe9ffb27097",
-      "name": "Task 004-B: 홈 링크 추가 및 메뉴 정리",
-      "description": "네비게이션에 홈 링크 추가. 좌측 메뉴에 서비스명 옆에 '홈' 링크 추가하여 대시보드로 이동 가능하게.",
-      "notes": "프로필 링크는 Task 018에서 추가 예정",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2026-03-03T07:40:03.221Z",
-      "updatedAt": "2026-03-03T07:40:03.221Z",
-      "relatedFiles": [
-        {
-          "path": "app/protected/layout.tsx",
-          "type": "TO_MODIFY",
-          "description": "홈 링크 추가"
-        }
-      ],
-      "implementationGuide": "1. 네비게이션 좌측 섹션에 홈 링크 추가\\n2. 구조:\\n   - div.flex.gap-5.items-center\\n     - Link href='/protected' → '모임 이벤트 관리'\\n     - Link href='/protected' text='홈' (선택적)\\n3. 스타일:\\n   - font-semibold 유지\\n   - 링크 hover:underline\\n4. 반응형: 모바일에서 텍스트 크기 조정\\n\\nNote: '모임 이벤트 관리' 텍스트 자체가 로고 역할. 클릭하면 홈(/protected)으로 이동.",
-      "verificationCriteria": "1. 로고/서비스명 클릭 시 /protected로 이동\\n2. 링크 활성화됨\\n3. 모바일 반응형 정상\\n4. TypeScript 컴파일 성공\\n5. ESLint 통과",
-      "analysisResult": "Task 004 완료 후: app/protected/layout.tsx가 프로덕션 수준의 깔끔한 네비게이션으로 업데이트됨. 서비스명이 '모임 이벤트 관리'로 변경되고, 스타터 컴포넌트가 제거됨. 대시보드와 일관된 레이아웃 제공. Task 005(이벤트 생성 페이지)의 기초 제공."
-    },
-    {
-      "id": "7db82c8a-a4b7-4a2d-b7a1-10eaf0c2bc29",
-      "name": "Task 004-C: 레이아웃 최종 정리",
-      "description": "protected/layout.tsx의 나머지 부분 정리. Hero, FetchDataSteps 등 스타터 컴포넌트 제거. 기본 구조만 유지.",
-      "notes": "footer는 선택적으로 제거 가능. 현재 유지.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "e627e095-a286-483d-8fa1-47c5865ceff9"
-        }
-      ],
-      "createdAt": "2026-03-03T07:40:03.221Z",
-      "updatedAt": "2026-03-03T07:40:03.221Z",
-      "relatedFiles": [
-        {
-          "path": "app/protected/layout.tsx",
-          "type": "TO_MODIFY",
-          "description": "스타터 컴포넌트 제거 및 레이아웃 정리"
-        }
-      ],
-      "implementationGuide": "1. app/protected/layout.tsx에서:\\n   - DeployButton import 제거\\n   - Hero, FetchDataSteps 관련 import 제거 (필요 시)\\n   - 스타터 마크업 제거\\n2. 최종 레이아웃 구조:\\n   - main.min-h-screen.flex.flex-col\\n   - nav (수정된 네비게이션)\\n   - div.flex-1.flex.flex-col {children}\\n   - footer (기본 유지 또는 제거)\\n3. children 렌더링은 유지\\n4. 스타일링 일관성 확인",
-      "verificationCriteria": "1. 스타터 코드 제거됨\\n2. 기본 레이아웃 구조 유지\\n3. children 정상 렌더링\\n4. 네비게이션 정상 표시\\n5. TypeScript 컴파일 성공\\n6. ESLint 통과\\n7. npm run dev에서 정상 표시",
-      "analysisResult": "Task 004 완료 후: app/protected/layout.tsx가 프로덕션 수준의 깔끔한 네비게이션으로 업데이트됨. 서비스명이 '모임 이벤트 관리'로 변경되고, 스타터 컴포넌트가 제거됨. 대시보드와 일관된 레이아웃 제공. Task 005(이벤트 생성 페이지)의 기초 제공."
-    },
-    {
-      "id": "03625799-de82-4b67-ac05-06b739779fac",
-      "name": "Task 002-A: 랜딩 페이지 헤더 및 기본 구조",
-      "description": "app/page.tsx의 기본 구조 및 헤더 구현. 네비게이션, 서비스명, 소개 텍스트 작성.",
-      "notes": "'use client' 불필요 (AuthButton이 있으면 추가 가능)",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2026-03-03T07:40:19.921Z",
-      "updatedAt": "2026-03-03T07:40:19.921Z",
-      "relatedFiles": [
-        {
-          "path": "app/page.tsx",
-          "type": "TO_MODIFY",
-          "description": "랜딩 페이지 전체 재작성"
-        }
-      ],
-      "implementationGuide": "1. app/page.tsx 전체 재작성\\n2. 페이지 구조:\\n   - main.min-h-screen.flex.flex-col\\n   - nav: 헤더 (로그인/회원가입 버튼)\\n   - section: 영웅 섹션\\n     - h1: '모임 이벤트 관리'\\n     - p: '소규모 모임을 쉽게 관리하세요'\\n3. 헤더 구성:\\n   - 좌측: 로고/서비스명\\n   - 우측: AuthButton\\n4. 영웅 섹션:\\n   - 텍스트 중앙 정렬\\n   - 반응형 폰트 크기\\n5. 여러 버튼은 Task 002-C에서",
-      "verificationCriteria": "1. 기본 페이지 구조 구현됨\\n2. 헤더 표시됨\\n3. 영웅 섹션 표시됨\\n4. Tailwind CSS로 스타일 적용\\n5. TypeScript 컴파일 성공\\n6. ESLint 통과",
-      "analysisResult": "Task 002 완료 후: app/page.tsx가 전문적인 랜딩 페이지로 구현됨. 서비스 소개, 5개 기능 카드, CTA 버튼이 포함됨. 로그인 상태 감지로 이미 로그인한 사용자는 대시보드로 리다이렉트. 모바일/데스크톱 모두 반응형 지원. Phase 1 완료."
-    },
-    {
-      "id": "8e221725-3131-4877-8b6b-8f9104d65e17",
-      "name": "Task 002-B: 기능 소개 카드 5개 구현",
-      "description": "5개의 기능 소개 카드 구현. 이벤트, 참여자 관리, 공지, 카풀, 정산 기능 소개.",
-      "notes": "각 카드는 독립적인 컴포넌트. 클릭 동작 없음.",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2026-03-03T07:40:19.921Z",
-      "updatedAt": "2026-03-03T07:40:19.921Z",
-      "relatedFiles": [
-        {
-          "path": "components/landing/feature-card.tsx",
-          "type": "CREATE",
-          "description": "기능 카드 컴포넌트 신규 생성"
-        }
-      ],
-      "implementationGuide": "1. components/landing/feature-card.tsx 생성\\n2. FeatureCard Props:\\n   - icon: React.ReactNode\\n   - title: string\\n   - description: string\\n3. 5개 카드 렌더링:\\n   - 이벤트 생성/관리 (Calendar icon)\\n   - 참여자 관리 (Users icon)\\n   - 공지 (Bell icon)\\n   - 카풀 매칭 (Car icon)\\n   - 1/N 정산 (DollarSign icon)\\n4. 아이콘: lucide-react 사용\\n5. 카드 스타일: Card from shadcn/ui\\n6. 그리드: grid-cols-1 md:grid-cols-2 lg:grid-cols-5\\n7. 반응형 레이아웃",
-      "verificationCriteria": "1. FeatureCard 컴포넌트 생성됨\\n2. 5개 카드 렌더링됨\\n3. 아이콘 표시됨\\n4. 반응형 그리드 적용\\n5. Tailwind 스타일\\n6. TypeScript 컴파일 성공",
-      "analysisResult": "Task 002 완료 후: app/page.tsx가 전문적인 랜딩 페이지로 구현됨. 서비스 소개, 5개 기능 카드, CTA 버튼이 포함됨. 로그인 상태 감지로 이미 로그인한 사용자는 대시보드로 리다이렉트. 모바일/데스크톱 모두 반응형 지원. Phase 1 완료."
-    },
-    {
-      "id": "aa473c90-f018-4b71-88b2-0d70dccff7eb",
-      "name": "Task 002-C: CTA 버튼 및 로그인 상태 처리",
-      "description": "랜딩 페이지의 CTA 버튼 추가. 로그인/회원가입 버튼 구현. 이미 로그인한 사용자는 대시보드로 리다이렉트.",
-      "notes": "이미 로그인한 사용자는 자동으로 /protected로 리다이렉트됨",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "03625799-de82-4b67-ac05-06b739779fac"
-        },
-        {
-          "taskId": "8e221725-3131-4877-8b6b-8f9104d65e17"
-        }
-      ],
-      "createdAt": "2026-03-03T07:40:19.921Z",
-      "updatedAt": "2026-03-03T07:40:19.921Z",
-      "relatedFiles": [
-        {
-          "path": "app/page.tsx",
-          "type": "TO_MODIFY",
-          "description": "CTA 버튼 및 인증 로직 추가"
-        }
-      ],
-      "implementationGuide": "1. app/page.tsx에서:\\n   - Suspense로 AuthButton과 함께 로그인 상태 확인\\n   - 'use client' 추가\\n   - async function checkAuth() - 사용자 확인\\n   - redirect('/protected')으로 이미 로그인한 사용자 처리\\n2. CTA 섹션 추가:\\n   - div: 중앙 정렬\\n   - Button: '로그인' → href='/auth/login'\\n   - Button: '회원가입' → href='/auth/sign-up'\\n   - gap-4, button:px-8\\n3. Suspense fallback: 로딩 상태\\n4. 배치:\\n   - 영웅 섹션 아래\\n   - 기능 카드 위\\n\\nNote: Suspense 패턴은 protected/page.tsx의 UserProfile 패턴 참고",
-      "verificationCriteria": "1. '로그인' 버튼 표시 및 /auth/login으로 링크\\n2. '회원가입' 버튼 표시 및 /auth/sign-up으로 링크\\n3. 인증된 사용자는 /protected로 리다이렉트\\n4. Suspense 로딩 상태 처리\\n5. 반응형 버튼 배치\\n6. TypeScript 컴파일 성공\\n7. ESLint 통과",
-      "analysisResult": "Task 002 완료 후: app/page.tsx가 전문적인 랜딩 페이지로 구현됨. 서비스 소개, 5개 기능 카드, CTA 버튼이 포함됨. 로그인 상태 감지로 이미 로그인한 사용자는 대시보드로 리다이렉트. 모바일/데스크톱 모두 반응형 지원. Phase 1 완료."
-    },
-    {
-      "id": "bcc9b8a7-fab6-4e67-ab22-c3125dceb473",
-      "name": "Task 005-A: 이벤트 생성 폼 컴포넌트 구현",
-      "description": "app/protected/events/new 디렉토리에서 사용할 이벤트 생성 폼 컴포넌트. 제목, 설명, 날짜/시간, 장소, 최대 인원, 승인 방식 필드 포함. 더미 데이터만 사용.",
-      "notes": "Server Action 없음 (Task 016에서 추가). 클릭 시 동작 없음.",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2026-03-03T13:16:15.696Z",
-      "updatedAt": "2026-03-03T13:16:15.696Z",
-      "relatedFiles": [
-        {
-          "path": "components/events/event-form.tsx",
-          "type": "CREATE",
-          "description": "이벤트 폼 컴포넌트 신규 생성"
-        }
-      ],
-      "implementationGuide": "1. 파일 생성: components/events/event-form.tsx\\n2. Props: { initialData?: Event, onSubmit?: (data) => void }\\n3. 폼 필드:\\n   - 제목 (필수, max 100자, 글자수 카운터)\\n   - 설명 (선택, textarea)\\n   - 날짜/시간 (필수, datetime-local)\\n   - 장소 (필수)\\n   - 최대 인원 (선택, number)\\n   - 승인 방식 토글 (자동 승인 / 주최자 승인)\\n4. 버튼: 취소, 만들기/수정 (클릭 시 onSubmit 호출)\\n5. 반응형 레이아웃",
-      "verificationCriteria": "1. 모든 필드 표시됨\\n2. 제목 글자수 카운터\\n3. 취소/만들기 버튼\\n4. TypeScript 컴파일 성공\\n5. 반응형 레이아웃",
-      "analysisResult": "Task 005 완료 후: 이벤트 생성 페이지가 더미 데이터 기반으로 UI 완성. 폼 필드 모두 표시. Server Action은 Task 016에서 추가."
-    },
-    {
-      "id": "3fe33814-efac-4c34-9ae3-5f14ac1888ea",
-      "name": "Task 005-B: 이벤트 생성 페이지 구현",
-      "description": "app/protected/events/new/page.tsx에서 이벤트 생성 페이지 구현. EventForm 컴포넌트 사용, 더미 데이터 기반.",
-      "notes": "Server Action 없음. UI만 구현.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "bcc9b8a7-fab6-4e67-ab22-c3125dceb473"
-        }
-      ],
-      "createdAt": "2026-03-03T13:16:15.696Z",
-      "updatedAt": "2026-03-03T13:16:15.696Z",
-      "relatedFiles": [
-        {
-          "path": "app/protected/events/new/page.tsx",
-          "type": "CREATE",
-          "description": "이벤트 생성 페이지 신규 생성"
-        }
-      ],
-      "implementationGuide": "1. 파일 생성: app/protected/events/new/page.tsx\\n2. 페이지 구조:\\n   - 제목: '새 모임 만들기'\\n   - EventForm 컴포넌트\\n3. 폼 제출:\\n   - 현재는 클릭만 해도 동작 없음\\n   - Task 016에서 Server Action 연결\\n4. 취소 버튼: 대시보드(/protected)로 이동\\n5. 스타일: 컨테이너 최대 너비 2xl",
-      "verificationCriteria": "1. 페이지 렌더링됨\\n2. EventForm 표시됨\\n3. 취소 버튼 동작 (대시보드로 이동)\\n4. TypeScript 컴파일 성공",
-      "analysisResult": "Task 005 완료 후: 이벤트 생성 페이지가 더미 데이터 기반으로 UI 완성. 폼 필드 모두 표시. Server Action은 Task 016에서 추가."
-    },
-    {
-      "id": "960ef591-5bb8-4792-86b5-9956eebaa7a6",
-      "name": "Task 005-C: 이벤트 생성 Server Action 구현 (선행 제외)",
-      "description": "향후 Task 016에서 구현. 현재는 UI만 완성.",
-      "notes": "Phase 4 Task 016에서 구현",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "3fe33814-efac-4c34-9ae3-5f14ac1888ea"
-        }
-      ],
-      "createdAt": "2026-03-03T13:16:15.696Z",
-      "updatedAt": "2026-03-03T13:16:15.696Z",
-      "relatedFiles": [],
-      "implementationGuide": "생략 (Phase 4)",
-      "verificationCriteria": "생략",
-      "analysisResult": "Task 005 완료 후: 이벤트 생성 페이지가 더미 데이터 기반으로 UI 완성. 폼 필드 모두 표시. Server Action은 Task 016에서 추가."
-    },
-    {
-      "id": "82e64ae6-2e41-4756-ba8b-56d5ea1bd8b3",
-      "name": "Task 006: 이벤트 수정 페이지",
-      "description": "app/protected/events/[eventId]/edit/page.tsx에서 이벤트 수정 페이지. EventForm 컴포넌트 재사용, 더미 데이터로 폼 사전 로드.",
-      "notes": "동작 없음 (Task 016에서 추가)",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "bcc9b8a7-fab6-4e67-ab22-c3125dceb473"
-        }
-      ],
-      "createdAt": "2026-03-03T13:26:16.867Z",
-      "updatedAt": "2026-03-03T13:26:16.867Z",
-      "relatedFiles": [
-        {
-          "path": "app/protected/events/[eventId]/edit/page.tsx",
-          "type": "CREATE",
-          "description": "이벤트 수정 페이지"
-        }
-      ],
-      "implementationGuide": "1. 디렉토리: app/protected/events/[eventId]/edit\\n2. page.tsx: 더미 이벤트 선택 후 EventForm에 initialData로 전달\\n3. 버튼: 수정/삭제 (UI만, 동작 없음)\\n4. 취소: 이벤트 상세로 이동\\n5. Task 016에서 Server Action 추가",
-      "verificationCriteria": "1. 페이지 렌더링\\n2. 폼에 더미 데이터 채워짐\\n3. 수정/삭제 버튼 표시",
-      "analysisResult": "Task 006-008 완료 후: 이벤트 수정/공개 페이지와 허브 탭 구조 완성. UI 요소 모두 표시."
-    },
-    {
-      "id": "db7f9d54-0329-4283-9bdc-750b18e31b6d",
-      "name": "Task 007: 공개 이벤트 상세 페이지",
-      "description": "app/events/share/[token]/page.tsx에서 비인증 사용자도 접근 가능한 공개 이벤트 상세 페이지.",
-      "notes": "로그인 상태 감지는 더미 로직 (Task 016에서 실제 구현)",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "cf1db824-7f7e-4d3d-8801-cab6f1c68efb"
-        }
-      ],
-      "createdAt": "2026-03-03T13:26:16.867Z",
-      "updatedAt": "2026-03-03T13:26:16.867Z",
-      "relatedFiles": [
-        {
-          "path": "app/events/share/[token]/page.tsx",
-          "type": "CREATE",
-          "description": "공개 이벤트 상세 페이지"
-        }
-      ],
-      "implementationGuide": "1. 디렉토리: app/events/share/[token]\\n2. 더미 데이터 기반 이벤트 정보 표시\\n3. 정보: 제목, 날짜, 장소, 설명, 참여자 수\\n4. 버튼 (상태별): 비로그인/참여 가능/승인 대기/참여/정원 마감\\n5. Task 001에서 공개 경로 설정됨",
-      "verificationCriteria": "1. 공개 경로 비인증 접근 가능\\n2. 이벤트 정보 표시\\n3. 상태별 버튼 표시",
-      "analysisResult": "Task 006-008 완료 후: 이벤트 수정/공개 페이지와 허브 탭 구조 완성. UI 요소 모두 표시."
-    },
-    {
-      "id": "7bbac993-cfb2-48fc-b022-60f086d74ebe",
-      "name": "Task 008: 이벤트 허브 셸 (탭 네비게이션)",
-      "description": "app/protected/events/[eventId]/page.tsx와 layout.tsx에서 이벤트 허브 탭 구조. EventHeader + Tabs 컴포넌트.",
-      "notes": "각 탭은 placeholder div만 추가. 콘텐츠는 이후 Task에서.",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2026-03-03T13:26:16.867Z",
-      "updatedAt": "2026-03-03T13:26:16.867Z",
-      "relatedFiles": [
         {
           "path": "app/protected/events/[eventId]/layout.tsx",
-          "type": "CREATE",
-          "description": "이벤트 허브 레이아웃"
-        },
-        {
-          "path": "app/protected/events/[eventId]/page.tsx",
-          "type": "CREATE",
-          "description": "이벤트 허브 탭 페이지"
-        },
-        {
-          "path": "components/events/event-header.tsx",
-          "type": "CREATE",
-          "description": "이벤트 헤더 컴포넌트"
+          "type": "TO_MODIFY",
+          "description": "EventTabNavigation 추가"
         }
       ],
-      "implementationGuide": "1. layout.tsx: EventHeader 컴포넌트\\n2. page.tsx: Tabs 컴포넌트 (shadcn)\\n3. 탭: 공지, 참여자(주최자만), 카풀, 정산, 설정(주최자만)\\n4. 각 탭 콘텐츠는 Task 009-012에서",
-      "verificationCriteria": "1. EventHeader 컴포넌트 생성\\n2. 탭 네비게이션 표시\\n3. 5개 탭 모두 보임",
-      "analysisResult": "Task 006-008 완료 후: 이벤트 수정/공개 페이지와 허브 탭 구조 완성. UI 요소 모두 표시."
+      "implementationGuide": "1. components/events/event-tab-navigation.tsx 생성 (클라이언트 컴포넌트)\n   - usePathname() 사용해서 pathname 분석\n   - /announcements, /members, /carpool, /settlement, /settings 경로로 매핑\n   - Link 컴포넌트로 라우팅 (동일 이벤트 ID 유지)\n   - isHost prop으로 members, settings 탭 조건부 렌더링\n   - className 활용해서 active tab 하이라이트 (border-b-2 등)\n2. app/protected/events/[eventId]/layout.tsx 수정\n   - 'use client' 제거 (이미 EventHeader 있음, 필요시만 추가)\n   - EventTabNavigation 임포트 후 EventHeader 아래에 렌더링\n   - isHost를 props로 전달 (현재 layout에서 이미 계산 중)\n   - {children}으로 nested route 콘텐츠 렌더링\n3. 주의사항\n   - URL 기반이므로 searchParams 대신 pathname 사용\n   - 초기 진입 시 /events/[eventId]는 /announcements로 리다이렉트 필요",
+      "verificationCriteria": "- EventTabNavigation 컴포넌트가 usePathname()으로 현재 탭 정확히 식별\n- active 탭이 시각적으로 구분되어야 함 (border, 색상 등)\n- 주최자(isHost=true)일 때만 members, settings 탭 표시\n- 각 탭 클릭 시 URL이 정확히 변경되고, 새로고침 후에도 동일한 탭이 활성화됨\n- TypeScript 타입 에러 없음",
+      "analysisResult": "이벤트 허브 탭 UI를 클라이언트 사이드 Tabs에서 Next.js nested routing 기반으로 변경하여 URL 기반 네비게이션 구현. 각 탭이 독립적 라우트가 되어 서버에서 데이터를 페칭할 수 있도록 개선.",
+      "summary": "EventTabNavigation 컴포넌트를 usePathname() 기반으로 생성하고 layout.tsx에 통합 완료. 각 탭의 active 상태를 정확히 식별하며, 주최자 전용 탭(members, settings)은 isHost prop으로 조건부 렌더링. Link 컴포넌트를 사용한 URL 기반 라우팅 구현으로 모든 nested route 접근 시 자동으로 탭 네비게이션 표시됨.",
+      "completedAt": "2026-03-03T15:26:06.316Z"
     },
     {
-      "id": "79a62d81-baa6-46d6-ada9-5cee193c9fe8",
-      "name": "Task 009: 공지 탭 UI",
-      "description": "app/protected/events/[eventId]/announcements/page.tsx에서 공지 탭 구현. 공지 목록과 작성 폼 (주최자만).",
-      "notes": "더미 데이터만 사용. Server Action은 Task 017에서.",
+      "id": "a943da92-59b3-4524-88b9-01e93484515f",
+      "name": "page.tsx 리다이렉트 설정",
+      "description": "기존 app/protected/events/[eventId]/page.tsx를 삭제하고, 사용자가 /events/[eventId]로 진입할 때 자동으로 /announcements로 리다이렉트되도록 설정합니다. 이는 사용자가 직접 URL을 입력하거나 외부 링크로 진입했을 때의 기본 동작입니다.",
+      "notes": "방법 2를 선택하는 이유: 서버 사이드 리다이렉트로 깜빡임 없고, 상태 유지 가능",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "7bbac993-cfb2-48fc-b022-60f086d74ebe"
+          "taskId": "0cb4fa56-be05-4cdc-9487-b1212f020c98"
         }
       ],
-      "createdAt": "2026-03-03T13:26:33.029Z",
-      "updatedAt": "2026-03-03T13:26:33.029Z",
+      "createdAt": "2026-03-03T15:25:24.738Z",
+      "updatedAt": "2026-03-03T15:25:24.738Z",
+      "relatedFiles": [
+        {
+          "path": "app/protected/events/[eventId]/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "redirect() 함수로 /announcements로 리다이렉트"
+        }
+      ],
+      "implementationGuide": "방법 1 (권장): page.tsx 삭제\n- 'use client'와 useRouter를 사용한 클라이언트 사이드 리다이렉트는 깜빡임 유발\n- Next.js 자동 라우팅: /events/[eventId] → 부모 layout 렌더링 후 자식 route 매칭\n- 자식 route 없으면 404가 아닌 layout만 렌더링 → 해결: nested route 안내 페이지 필요\n\n방법 2 (대체): middleware.ts 사용\n- app/protected/events/[eventId]/page.tsx에서 redirect() 함수 사용\n- 'use server' (기본값)\n- redirect(`/protected/events/${eventId}/announcements`)\n- 이 방법이 더 깔끔함\n\n권장 사항: 방법 2 적용\n- TypeScript에서 redirect import from 'next/navigation'\n- params를 await하고 eventId 추출\n- redirect로 리다이렉트",
+      "verificationCriteria": "- /events/[eventId]로 직접 진입 시 /announcements로 자동 리다이렉트됨\n- URL 변경이 즉시 반영됨 (브라우저 히스토리 스택에 추가)\n- 리다이렉트 후 EventTabNavigation에서 announcements 탭이 active 상태로 표시됨",
+      "analysisResult": "이벤트 허브 탭 UI를 클라이언트 사이드 Tabs에서 Next.js nested routing 기반으로 변경하여 URL 기반 네비게이션 구현. 각 탭이 독립적 라우트가 되어 서버에서 데이터를 페칭할 수 있도록 개선."
+    },
+    {
+      "id": "545c9b0d-1bdc-4222-9b82-59eeeec8ced6",
+      "name": "announcements/page.tsx 데이터 페칭 및 콘텐츠 렌더링",
+      "description": "공지 탭 페이지를 구현합니다. 더미 데이터를 기반으로 공지 목록과 주최자 전용 공지 작성 폼을 렌더링합니다. Phase 4에서 실제 DB 연동이 이루어집니다.",
+      "notes": "dummy-data.ts 수정 필요: announcements 배열 추가. isHost props는 parent layout에서 받아야 하는데, 현재는 page.tsx에서 직접 판단 필요. 또는 parent에서 children에 props 전달 불가이므로 같은 eventId로 data lookup하면서 isHost 재계산.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "0cb4fa56-be05-4cdc-9487-b1212f020c98"
+        }
+      ],
+      "createdAt": "2026-03-03T15:25:24.738Z",
+      "updatedAt": "2026-03-03T15:25:24.738Z",
       "relatedFiles": [
         {
           "path": "app/protected/events/[eventId]/announcements/page.tsx",
@@ -446,124 +73,149 @@
         {
           "path": "components/events/announcement-card.tsx",
           "type": "CREATE",
-          "description": "공지 카드"
+          "description": "공지 카드 컴포넌트"
         },
         {
           "path": "components/events/announcement-form.tsx",
           "type": "CREATE",
-          "description": "공지 작성 폼"
+          "description": "공지 작성 폼 컴포넌트"
+        },
+        {
+          "path": "lib/dummy-data.ts",
+          "type": "TO_MODIFY",
+          "description": "Announcement 인터페이스 및 더미 데이터 추가"
         }
       ],
-      "implementationGuide": "1. 페이지: app/protected/events/[eventId]/announcements/page.tsx\\n2. 컴포넌트: AnnouncementCard, AnnouncementForm\\n3. 공지 목록: 고정 공지 상단, 카드 형식\\n4. 작성 폼: 제목, 내용, 고정 토글 (주최자만)\\n5. 버튼: 수정/삭제/고정 (더미 상태)",
-      "verificationCriteria": "1. 공지 목록 표시\\n2. 고정 공지 상단 표시\\n3. 작성 폼 (주최자만)\\n4. 수정/삭제 버튼",
-      "analysisResult": "Task 009-012 완료 후: 이벤트 허브의 모든 탭 UI 완성. 공지, 참여자, 카풀, 정산 모두 더미 데이터 기반으로 표시. Phase 2 UI/UX 완성."
+      "implementationGuide": "1. 구조\n   - app/protected/events/[eventId]/announcements/page.tsx (서버 컴포넌트)\n   - 더미 공지 데이터 로드 (dummy-data.ts에서 추가 필요)\n   - 공지 목록 렌더링\n   - 주최자인 경우만 공지 작성 폼 표시\n\n2. 더미 데이터 구조 (dummy-data.ts에 추가)\n   - Announcement 인터페이스: { id, eventId, authorName, title, content, isPinned, createdAt, updatedAt }\n   - 각 이벤트별 공지 배열\n\n3. 컴포넌트 구조 (Phase 2는 UI만, 동작은 없음)\n   - AnnouncementCard 컴포넌트: 공지 카드 (제목, 내용 미리보기, 작성자, 날짜)\n   - 고정 공지는 상단에 별 아이콘과 함께 표시\n   - 주최자에게만 수정/삭제/고정토글 버튼 표시 (클릭 해도 동작 없음)\n   - AnnouncementForm 컴포넌트: 공지 작성 폼 (제목, 내용, 고정 여부 토글)\n   - 폼 제출 버튼은 클릭 해도 동작 없음 (Phase 4에서 Server Action 연결)\n\n4. 레이아웃\n   - 고정 공지 섹션 (있으면)\n   - 일반 공지 목록\n   - 주최자 전용: 공지 작성 폼 (상단)\n   - 공지 없으면 빈 상태 UI",
+      "verificationCriteria": "- /events/[eventId]/announcements 페이지가 로드됨\n- 고정 공지가 상단에 표시됨 (isPinned=true)\n- 각 공지 카드에 제목, 내용, 작성자, 날짜 표시\n- 주최자(isHost=true)일 때만 수정/삭제/고정 버튼 표시\n- 주최자인 경우만 공지 작성 폼이 상단에 표시됨\n- TypeScript 타입 에러 없음",
+      "analysisResult": "이벤트 허브 탭 UI를 클라이언트 사이드 Tabs에서 Next.js nested routing 기반으로 변경하여 URL 기반 네비게이션 구현. 각 탭이 독립적 라우트가 되어 서버에서 데이터를 페칭할 수 있도록 개선."
     },
     {
-      "id": "db7d6c5d-19b9-4482-a240-59d47f0297b0",
-      "name": "Task 010: 참여자 탭 UI",
-      "description": "app/protected/events/[eventId]/members/page.tsx에서 참여자 관리 탭. 승인 대기/승인/대기자 목록.",
-      "notes": "더미 상태. Server Action은 Task 017에서.",
+      "id": "3ab1ab26-7cf5-4b64-8ffc-fe3a8d01a6a4",
+      "name": "members/page.tsx 데이터 페칭 및 콘텐츠 렌더링",
+      "description": "참여자 관리 탭 페이지를 구현합니다. 승인 대기, 승인됨, 대기자 섹션으로 나누어 더미 데이터를 렌더링합니다. 주최자만 접근 가능합니다.",
+      "notes": "권한 검증: layout.tsx에서 isHost를 받을 수 없으므로, page.tsx에서 eventId로 hostedEvents에서 해당 이벤트를 찾아 isHost 재계산. 또는 middleware에서 처리.",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "7bbac993-cfb2-48fc-b022-60f086d74ebe"
+          "taskId": "0cb4fa56-be05-4cdc-9487-b1212f020c98"
         }
       ],
-      "createdAt": "2026-03-03T13:26:33.029Z",
-      "updatedAt": "2026-03-03T13:26:33.029Z",
+      "createdAt": "2026-03-03T15:25:24.738Z",
+      "updatedAt": "2026-03-03T15:25:24.738Z",
       "relatedFiles": [
         {
           "path": "app/protected/events/[eventId]/members/page.tsx",
           "type": "CREATE",
-          "description": "참여자 관리 탭"
+          "description": "참여자 탭 페이지"
         },
         {
-          "path": "components/events/member-list.tsx",
+          "path": "components/events/member-card.tsx",
           "type": "CREATE",
-          "description": "참여자 목록"
+          "description": "참여자 카드 컴포넌트"
+        },
+        {
+          "path": "components/events/member-section.tsx",
+          "type": "CREATE",
+          "description": "참여자 섹션 컴포넌트"
+        },
+        {
+          "path": "lib/dummy-data.ts",
+          "type": "TO_MODIFY",
+          "description": "EventMember 인터페이스 및 더미 데이터 추가"
         }
       ],
-      "implementationGuide": "1. 페이지: app/protected/events/[eventId]/members/page.tsx\\n2. 섹션:\\n   - 승인 대기(pending): 이름, 신청일, 승인/거절 버튼\\n   - 승인됨(approved): 이름, 강퇴 버튼\\n   - 대기자(waitlisted): 이름, 승인 가능 시 목록 이동\\n3. 주최자 외 접근 시 권한 오류\\n4. 더미 데이터 사용",
-      "verificationCriteria": "1. 3개 섹션 표시\\n2. 각 섹션에 목록\\n3. 버튼 (승인/거절/강퇴)\\n4. 권한 오류 메시지",
-      "analysisResult": "Task 009-012 완료 후: 이벤트 허브의 모든 탭 UI 완성. 공지, 참여자, 카풀, 정산 모두 더미 데이터 기반으로 표시. Phase 2 UI/UX 완성."
+      "implementationGuide": "1. 구조\n   - app/protected/events/[eventId]/members/page.tsx (서버 컴포넌트)\n   - 더미 참여자 데이터 로드 (dummy-data.ts에서 추가)\n   - 상태별 (pending, approved, waitlisted) 섹션 분리 렌더링\n   - 주최자 전용: 각 참여자별 승인/거절/강퇴 버튼 표시\n\n2. 더미 데이터 구조 (dummy-data.ts에 추가)\n   - EventMember 인터페이스: { id, eventId, userId, userName, userProfileImage?, status, appliedAt }\n   - 상태: 'pending' | 'approved' | 'waitlisted' | 'rejected'\n   - 각 이벤트별 참여자 배열 (여러 상태 포함)\n\n3. 컴포넌트 구조\n   - MemberSection 컴포넌트: 상태별 섹션 (제목, 참여자 목록)\n   - MemberCard 컴포넌트: 개별 참여자 카드 (이름, 프로필 이미지?, 신청일, 상태)\n   - 주최자용 MemberActions 컴포넌트: 버튼 그룹 (승인, 거절, 강퇴)\n\n4. 권한 검증\n   - 비주최자가 접근하면 권한 없음 메시지 표시\n   - \"주최자만 접근할 수 있습니다\" 메시지\n   - 뒤로가기 또는 대시보드 링크 제공\n\n5. 레이아웃\n   - 섹션: 승인 대기 (pending)\n   - 섹션: 승인됨 (approved)\n   - 섹션: 대기자 (waitlisted)\n   - 각 섹션별로 count 표시",
+      "verificationCriteria": "- /events/[eventId]/members 페이지가 로드됨\n- 승인 대기/승인됨/대기자 섹션이 명확히 분리됨\n- 각 섹션에 해당하는 참여자가 정확히 표시됨\n- 주최자(isHost=true)일 때만 승인/거절/강퇴 버튼 표시\n- 비주최자일 때 권한 없음 메시지 표시\n- TypeScript 타입 에러 없음",
+      "analysisResult": "이벤트 허브 탭 UI를 클라이언트 사이드 Tabs에서 Next.js nested routing 기반으로 변경하여 URL 기반 네비게이션 구현. 각 탭이 독립적 라우트가 되어 서버에서 데이터를 페칭할 수 있도록 개선."
     },
     {
-      "id": "bd3d2223-ea14-447c-948d-22e38bbb9349",
-      "name": "Task 011: 카풀 탭 UI",
-      "description": "app/protected/events/[eventId]/carpool/page.tsx에서 카풀 탭. 운전자/탑승자 등록 폼과 매칭 현황.",
-      "notes": "더미 상태. 매칭 로직은 Task 017에서.",
+      "id": "bc9fdb01-715d-4f86-a514-a101c892f139",
+      "name": "carpool/page.tsx 데이터 페칭 및 콘텐츠 렌더링",
+      "description": "카풀 탭 페이지를 구현합니다. 지역별 운전자 카드, 매칭된 탑승자 목록, 그리고 운전자/탑승자 등록 폼을 더미 데이터로 렌더링합니다.",
+      "notes": "운전자/탑승자 등록 폼은 더미 상태로, Phase 4에서 Server Action 연결",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "7bbac993-cfb2-48fc-b022-60f086d74ebe"
+          "taskId": "0cb4fa56-be05-4cdc-9487-b1212f020c98"
         }
       ],
-      "createdAt": "2026-03-03T13:26:33.029Z",
-      "updatedAt": "2026-03-03T13:26:33.029Z",
+      "createdAt": "2026-03-03T15:25:24.738Z",
+      "updatedAt": "2026-03-03T15:25:24.738Z",
       "relatedFiles": [
         {
           "path": "app/protected/events/[eventId]/carpool/page.tsx",
           "type": "CREATE",
-          "description": "카풀 탭"
+          "description": "카풀 탭 페이지"
         },
         {
           "path": "components/events/carpool-group.tsx",
           "type": "CREATE",
-          "description": "카풀 그룹"
+          "description": "카풀 그룹 카드 컴포넌트"
         },
         {
           "path": "components/events/carpool-driver-form.tsx",
-          "type": "CREATE",
-          "description": "운전자 폼"
+          "type": "TO_MODIFY",
+          "description": "운전자 등록 폼 (기존 파일이 있을 수 있음)"
         },
         {
           "path": "components/events/carpool-passenger-form.tsx",
-          "type": "CREATE",
-          "description": "탑승 폼"
+          "type": "TO_MODIFY",
+          "description": "탑승 희망 폼 (기존 파일이 있을 수 있음)"
+        },
+        {
+          "path": "lib/dummy-data.ts",
+          "type": "TO_MODIFY",
+          "description": "CarpoolDriver, CarpoolPassenger 인터페이스 및 더미 데이터 추가"
         }
       ],
-      "implementationGuide": "1. 페이지: app/protected/events/[eventId]/carpool/page.tsx\\n2. 컴포넌트:\\n   - CarpoolGroup: 지역별 그룹 카드\\n   - DriverForm: 운전자 등록\\n   - PassengerForm: 탑승자 등록\\n3. 화면:\\n   - 매칭 완료 카풀 그룹\\n   - 운전자 등록 폼 (선택적)\\n   - 탑승 희망 폼 (선택적)\\n   - 매칭 버튼 (주최자만)\\n4. 더미 데이터",
-      "verificationCriteria": "1. 카풀 그룹 표시\\n2. 운전자/탑승 폼\\n3. 매칭 버튼\\n4. 지역별 그룹화",
-      "analysisResult": "Task 009-012 완료 후: 이벤트 허브의 모든 탭 UI 완성. 공지, 참여자, 카풀, 정산 모두 더미 데이터 기반으로 표시. Phase 2 UI/UX 완성."
+      "implementationGuide": "1. 구조\n   - app/protected/events/[eventId]/carpool/page.tsx (서버 컴포넌트)\n   - 더미 카풀 데이터 로드\n   - 지역별 운전자 그룹 카드 렌더링\n   - 운전자/탑승 등록 폼 렌더링\n\n2. 더미 데이터 구조 (dummy-data.ts에 추가)\n   - CarpoolDriver: { id, eventId, driverId, driverName, departureArea, departureTime, availableSeats, currentSeats, createdAt }\n   - CarpoolPassenger: { id, eventId, passengerId, passengerName, driverId?, departureArea, status, appliedAt }\n   - 상태: 'pending' | 'matched' | 'cancelled'\n   - 각 이벤트별 운전자/탑승자 배열\n\n3. 컴포넌트 구조\n   - CarpoolGroupCard 컴포넌트: 운전자 정보, 탑승자 목록, 잔여 좌석\n   - CarpoolDriverForm 컴포넌트: 운전자 등록 폼 (출발지역, 출발시간, 가능좌석)\n   - CarpoolPassengerForm 컴포넌트: 탑승 희망 폼 (희망 출발지역)\n\n4. 레이아웃\n   - 운전자 등록 폼 (상단)\n   - 지역별 카풀 그룹 카드 (매칭됨)\n   - 탑승 희망 등록 폼\n   - 매칭 처리 버튼 (주최자만)\n   - 버튼 클릭 해도 동작 없음",
+      "verificationCriteria": "- /events/[eventId]/carpool 페이지가 로드됨\n- 운전자 등록 폼이 상단에 표시됨\n- 지역별 카풀 그룹 카드가 표시됨 (운전자 정보, 탑승인원, 잔여좌석)\n- 각 그룹에 매칭된 탑승자 목록이 표시됨\n- 탑승 희망 등록 폼이 표시됨\n- 주최자(isHost=true)일 때만 매칭 처리 버튼 표시\n- TypeScript 타입 에러 없음",
+      "analysisResult": "이벤트 허브 탭 UI를 클라이언트 사이드 Tabs에서 Next.js nested routing 기반으로 변경하여 URL 기반 네비게이션 구현. 각 탭이 독립적 라우트가 되어 서버에서 데이터를 페칭할 수 있도록 개선."
     },
     {
-      "id": "0e6fbdd7-7c7f-4405-8960-afe8084990c4",
-      "name": "Task 012: 정산 탭 UI",
-      "description": "app/protected/events/[eventId]/settlement/page.tsx에서 정산 탭. 비용 항목 추가, 1/N 계산, 납부 현황.",
-      "notes": "더미 상태. 계산은 Task 017에서.",
+      "id": "6863c39a-0931-4868-8a4c-0f588347452e",
+      "name": "settlement/page.tsx 데이터 페칭 및 콘텐츠 렌더링",
+      "description": "정산 탭 페이지를 구현합니다. 비용 항목 목록, 1/N 계산 버튼, 1인당 금액 요약 카드, 납부 현황 테이블을 더미 데이터로 렌더링합니다.",
+      "notes": "Phase 2에서는 UI만, 실제 계산은 Phase 4에서 Server Action으로 구현",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "7bbac993-cfb2-48fc-b022-60f086d74ebe"
+          "taskId": "0cb4fa56-be05-4cdc-9487-b1212f020c98"
         }
       ],
-      "createdAt": "2026-03-03T13:26:33.029Z",
-      "updatedAt": "2026-03-03T13:26:33.029Z",
+      "createdAt": "2026-03-03T15:25:24.738Z",
+      "updatedAt": "2026-03-03T15:25:24.738Z",
       "relatedFiles": [
         {
           "path": "app/protected/events/[eventId]/settlement/page.tsx",
           "type": "CREATE",
-          "description": "정산 탭"
+          "description": "정산 탭 페이지"
         },
         {
           "path": "components/events/settlement-item-form.tsx",
-          "type": "CREATE",
-          "description": "항목 폼"
+          "type": "TO_MODIFY",
+          "description": "정산 항목 추가 폼 (기존 파일 있을 수 있음)"
         },
         {
           "path": "components/events/settlement-summary.tsx",
           "type": "CREATE",
-          "description": "정산 요약"
+          "description": "1인당 금액 요약 카드"
         },
         {
           "path": "components/events/payment-status-table.tsx",
           "type": "CREATE",
-          "description": "납부 현황"
+          "description": "납부 현황 테이블"
+        },
+        {
+          "path": "lib/dummy-data.ts",
+          "type": "TO_MODIFY",
+          "description": "SettlementItem, SettlementPayment 인터페이스 및 더미 데이터 추가"
         }
       ],
-      "implementationGuide": "1. 페이지: app/protected/events/[eventId]/settlement/page.tsx\\n2. 컴포넌트:\\n   - SettlementItemForm: 항목 추가\\n   - SettlementSummary: 1인당 금액\\n   - PaymentStatusTable: 납부 현황\\n3. 화면:\\n   - 비용 항목 목록\\n   - 항목 추가 폼 (주최자만)\\n   - 1/N 계산 버튼 (주최자만)\\n   - 요약 카드\\n   - 납부 현황 테이블\\n4. 더미 데이터",
-      "verificationCriteria": "1. 비용 항목 목록\\n2. 항목 추가 폼\\n3. 1/N 계산 버튼\\n4. 요약 카드\\n5. 납부 현황 테이블",
-      "analysisResult": "Task 009-012 완료 후: 이벤트 허브의 모든 탭 UI 완성. 공지, 참여자, 카풀, 정산 모두 더미 데이터 기반으로 표시. Phase 2 UI/UX 완성."
+      "implementationGuide": "1. 구조\n   - app/protected/events/[eventId]/settlement/page.tsx (서버 컴포넌트)\n   - 더미 정산 데이터 로드\n   - 비용 항목 목록, 계산 버튼, 결과 요약, 납부 현황 렌더링\n\n2. 더미 데이터 구조 (dummy-data.ts에 추가)\n   - SettlementItem: { id, settlementId, name, amount, paidBy, createdAt }\n   - SettlementPayment: { id, settlementId, userId, userName, amountOwed, status, createdAt }\n   - 상태: 'unpaid' | 'paid'\n   - 각 이벤트별 정산 및 항목 배열\n\n3. 컴포넌트 구조\n   - SettlementItemForm 컴포넌트: 항목 추가 폼 (항목명, 금액, 선불자)\n   - SettlementItemCard 컴포넌트: 비용 항목 카드 (항목명, 금액, 선불자)\n   - SettlementSummary 컴포넌트: 1인당 금액 요약 카드 (총액, 참여인원, 1인당금액)\n   - PaymentStatusTable 컴포넌트: 납부 현황 테이블 (이름, 납부액, 상태, 납부완료 버튼)\n\n4. 레이아웃\n   - 주최자용 항목 추가 폼 (상단)\n   - 비용 항목 목록\n   - 1/N 계산 버튼 (주최자만)\n   - 1인당 금액 요약 카드 (계산 후 표시)\n   - 납부 현황 테이블\n\n5. 상태 관리\n   - \"1/N 계산\" 버튼은 더미 상태 (클릭해도 동작 없음)\n   - \"납부 완료\" 버튼은 각 사용자가 본인 항목만 클릭 가능 (더미 상태)",
+      "verificationCriteria": "- /events/[eventId]/settlement 페이지가 로드됨\n- 주최자(isHost=true)인 경우만 항목 추가 폼이 표시됨\n- 비용 항목 목록이 표시됨\n- 1/N 계산 버튼이 표시됨 (주최자만)\n- 1인당 금액 요약 카드가 표시됨\n- 납부 현황 테이블이 표시됨 (이름, 납부액, 상태)\n- 각 사용자는 본인 행에만 \"납부 완료\" 버튼 표시\n- TypeScript 타입 에러 없음",
+      "analysisResult": "이벤트 허브 탭 UI를 클라이언트 사이드 Tabs에서 Next.js nested routing 기반으로 변경하여 URL 기반 네비게이션 구현. 각 탭이 독립적 라우트가 되어 서버에서 데이터를 페칭할 수 있도록 개선."
     }
   ]
 }

@@ -1,4 +1,5 @@
 import { EventHeader } from "@/components/events/event-header"
+import { EventTabNavigation } from "@/components/events/event-tab-navigation"
 import { dummyEvents } from "@/lib/dummy-data"
 
 interface EventLayoutProps {
@@ -38,6 +39,7 @@ export default async function EventLayout({
   return (
     <div className="space-y-6">
       <EventHeader event={event} isHost={isHost} />
+      <EventTabNavigation eventId={eventId} isHost={isHost} />
       {children}
     </div>
   )

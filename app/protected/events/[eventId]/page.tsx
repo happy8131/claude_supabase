@@ -2,12 +2,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Bell, Cog, DollarSign, Users, Wind } from "lucide-react"
 
 interface EventHubPageProps {
-  params: {
+  params: Promise<{
     eventId: string
-  }
+  }>
 }
 
-export default function EventHubPage({ params }: EventHubPageProps) {
+export default async function EventHubPage({ params }: EventHubPageProps) {
+  const { eventId } = await params
+
   // 더미: 주최자 상태 (실제는 DB에서 확인)
   const isHost = true
 

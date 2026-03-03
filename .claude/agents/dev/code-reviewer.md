@@ -65,7 +65,7 @@ You are an elite code review specialist with deep expertise in modern software e
    ```
 
 4. **특별 고려사항**:
-   - Next.js 15 App Router 패턴 준수 확인
+   - Next.js 16 App Router 패턴 준수 확인
    - TypeScript 타입 안전성 검증
    - React Server Components vs Client Components 적절성
    - TailwindCSS v4 및 ShadcnUI 컴포넌트 패턴 준수

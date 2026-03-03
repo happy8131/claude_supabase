@@ -5,14 +5,18 @@ import { Button } from "@/components/ui/button"
 import { dummyEvents } from "@/lib/dummy-data"
 
 interface EditEventPageProps {
-  params: {
+  params: Promise<{
     eventId: string
-  }
+  }>
 }
 
-export default function EditEventPage({ params }: EditEventPageProps) {
-  // 더미 데이터에서 첫 번째 호스트 이벤트 사용 (실제는 DB에서 조회)
-  const event = dummyEvents.hostedEvents[0]
+export default async function EditEventPage({ params }: EditEventPageProps) {
+  const { eventId } = await params
+
+  // TODO(Phase 3): DB에서 eventId로 이벤트 조회로 교체
+  const event =
+    dummyEvents.hostedEvents.find((e) => e.id === eventId) ??
+    dummyEvents.hostedEvents[0]
 
   if (!event) {
     return <div>이벤트를 찾을 수 없습니다.</div>

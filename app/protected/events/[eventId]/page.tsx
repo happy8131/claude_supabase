@@ -10,7 +10,10 @@ interface EventHubPageProps {
 export default async function EventHubPage({ params }: EventHubPageProps) {
   const { eventId } = await params
 
-  // 더미: 주최자 상태 (실제는 DB에서 확인)
+  // TODO(Phase 3): DB와 인증 정보를 통해 isHost 결정
+  // const event = await getEvent(eventId)
+  // const { user } = await getUser()
+  // const isHost = event.hostId === user.id
   const isHost = true
 
   return (

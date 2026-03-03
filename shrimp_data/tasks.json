@@ -1,0 +1,288 @@
+{
+  "tasks": [
+    {
+      "id": "49d10911-3da0-440d-a809-c5731336c5e8",
+      "name": "Task 001-A: 공개 경로 상수 및 헬퍼 함수 정의",
+      "description": "lib/supabase/proxy.ts에서 공개 경로를 관리하기 위한 상수 배열과 헬퍼 함수 작성. PUBLIC_PATHS 배열에 /auth, /events/share 경로 정의. isPublicPath(pathname: string) 함수 작성하여 경로 확인 로직 구현.",
+      "notes": "startsWith() 사용으로 /events/share와 /events/share/[token] 모두 매칭됨",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2026-03-03T07:39:30.607Z",
+      "updatedAt": "2026-03-03T07:39:30.607Z",
+      "relatedFiles": [
+        {
+          "path": "lib/supabase/proxy.ts",
+          "type": "TO_MODIFY",
+          "description": "공개 경로 상수 및 헬퍼 함수 추가",
+          "lineStart": 1,
+          "lineEnd": 10
+        }
+      ],
+      "implementationGuide": "lib/supabase/proxy.ts 파일 상단에 다음을 추가:\\n1. const PUBLIC_PATHS: readonly string[] = ['/auth', '/events/share'] 정의\\n2. function isPublicPath(pathname: string): boolean 함수 작성\\n3. 함수는 pathname.startsWith() 사용하여 매칭\\n4. JSDoc 주석 추가",
+      "verificationCriteria": "1. PUBLIC_PATHS 배열 정의됨\\n2. isPublicPath() 함수 구현됨\\n3. TypeScript 컴파일 성공\\n4. ESLint 통과",
+      "analysisResult": "Task 001 완료 후: lib/supabase/proxy.ts에서 PUBLIC_PATHS 배열과 isPublicPath 함수가 정의됨. updateSession에서 공개 경로 체크 로직이 /events/share를 포함하도록 수정됨. 기존 인증 플로우와 getClaims 호출은 변경 없음. TypeScript 컴파일 및 ESLint 통과. Task 007(공개 이벤트 상세 페이지)의 전제조건 충족."
+    },
+    {
+      "id": "53fc7f08-4d68-49bd-b4e2-36b81a37fc8f",
+      "name": "Task 001-B: updateSession 함수 로직 수정",
+      "description": "updateSession 함수에서 공개 경로 체크 로직을 isPublicPath() 헬퍼로 대체. 기존 /login, /auth 체크를 제거하고 /events/share 경로도 포함.",
+      "notes": "getClaims() 호출 순서 변경 금지. 세션 관리 정확성 유지",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "49d10911-3da0-440d-a809-c5731336c5e8"
+        }
+      ],
+      "createdAt": "2026-03-03T07:39:30.607Z",
+      "updatedAt": "2026-03-03T07:39:30.607Z",
+      "relatedFiles": [
+        {
+          "path": "lib/supabase/proxy.ts",
+          "type": "TO_MODIFY",
+          "description": "공개 경로 체크 로직 수정",
+          "lineStart": 51,
+          "lineEnd": 61
+        }
+      ],
+      "implementationGuide": "lib/supabase/proxy.ts의 updateSession 함수 51-61번 라인 수정:\\n\\n현재: !request.nextUrl.pathname.startsWith('/login') && !request.nextUrl.pathname.startsWith('/auth')\\n\\n변경: !isPublicPath(request.nextUrl.pathname)\\n\\ngetClaims() 호출과 쿠키 관리는 유지",
+      "verificationCriteria": "1. 리다이렉트 조건이 isPublicPath() 사용\\n2. /events/share에서 비인증 사용자 리다이렉트 안 됨\\n3. /auth는 비인증만 접근 가능\\n4. TypeScript 컴파일 성공\\n5. ESLint 통과",
+      "analysisResult": "Task 001 완료 후: lib/supabase/proxy.ts에서 PUBLIC_PATHS 배열과 isPublicPath 함수가 정의됨. updateSession에서 공개 경로 체크 로직이 /events/share를 포함하도록 수정됨. 기존 인증 플로우와 getClaims 호출은 변경 없음. TypeScript 컴파일 및 ESLint 통과. Task 007(공개 이벤트 상세 페이지)의 전제조건 충족."
+    },
+    {
+      "id": "cf1db824-7f7e-4d3d-8801-cab6f1c68efb",
+      "name": "Task 001-C: 패턴 검증 및 테스트",
+      "description": "proxy.ts matcher 패턴이 /events/share 경로를 제대로 캡처하는지 검증. npm run dev로 개발 서버 시작 후 라우팅 동작 확인.",
+      "notes": "proxy.ts의 matcher는 현재 상태가 적절함. updateSession에서 isPublicPath로 필터링",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "53fc7f08-4d68-49bd-b4e2-36b81a37fc8f"
+        }
+      ],
+      "createdAt": "2026-03-03T07:39:30.607Z",
+      "updatedAt": "2026-03-03T07:39:30.607Z",
+      "relatedFiles": [
+        {
+          "path": "proxy.ts",
+          "type": "REFERENCE",
+          "description": "matcher 패턴 검증",
+          "lineStart": 9,
+          "lineEnd": 21
+        }
+      ],
+      "implementationGuide": "1. 프로젝트 루트 proxy.ts의 matcher 검토 (수정 불필요)\\n2. matcher가 정적 파일만 제외하는지 확인\\n3. npm run dev 실행\\n4. 브라우저에서 /events/share/test 경로 접근 시 404 (페이지 없음) 나오는지 확인\\n5. 인증 중단 없음 확인",
+      "verificationCriteria": "1. 프로젝트 루트 proxy.ts의 matcher가 /events/share 캡처\\n2. 개발 서버 정상 실행\\n3. 비인증 사용자가 /events/share 경로 접근 가능\\n4. 로그인 리다이렉트 없음",
+      "analysisResult": "Task 001 완료 후: lib/supabase/proxy.ts에서 PUBLIC_PATHS 배열과 isPublicPath 함수가 정의됨. updateSession에서 공개 경로 체크 로직이 /events/share를 포함하도록 수정됨. 기존 인증 플로우와 getClaims 호출은 변경 없음. TypeScript 컴파일 및 ESLint 통과. Task 007(공개 이벤트 상세 페이지)의 전제조건 충족."
+    },
+    {
+      "id": "65881aab-5ab2-4250-b16c-fcdc7013473f",
+      "name": "Task 003-A: EventCard 컴포넌트 구현",
+      "description": "재사용 가능한 EventCard 컴포넌트 생성. 이벤트 기본 정보(제목, 날짜, 장소, 참여자 수, 상태)를 표시. Tailwind CSS와 shadcn/ui 스타일 사용.",
+      "notes": "링크 동작 없음 (onclick 제거). Task 016에서 /protected/events/[eventId]로 연결 예정",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2026-03-03T07:39:48.108Z",
+      "updatedAt": "2026-03-03T07:39:48.108Z",
+      "relatedFiles": [
+        {
+          "path": "components/events/event-card.tsx",
+          "type": "CREATE",
+          "description": "EventCard 컴포넌트 신규 생성"
+        }
+      ],
+      "implementationGuide": "1. 파일 생성: components/events/event-card.tsx\\n2. Props 타입 정의:\\n   - id: string\\n   - title: string\\n   - date: string (ISO 형식)\\n   - location: string\\n   - participantCount: number\\n   - maxMembers?: number\\n   - status: 'scheduled' | 'completed' | 'cancelled'\\n3. 컴포넌트 구조:\\n   - 카드 컨테이너 (Card from shadcn)\\n   - 제목 (h3)\\n   - 날짜/장소 정보 (flex + 아이콘)\\n   - 참여자 수 표시\\n   - 상태 배지 (Badge)\\n4. 상태별 배지 색상:\\n   - scheduled: 파란색\\n   - completed: 초록색\\n   - cancelled: 회색\\n5. 반응형: 모바일/데스크톱 모두 지원",
+      "verificationCriteria": "1. EventCard 컴포넌트 파일 생성됨\\n2. Props 타입 정의 명확\\n3. Tailwind CSS로 스타일 적용\\n4. 상태별 배지 색상 다름\\n5. TypeScript 컴파일 성공\\n6. ESLint 통과",
+      "analysisResult": "Task 003 완료 후: app/protected/page.tsx가 더미 데이터 기반 대시보드로 구현됨. EventCard 컴포넌트가 생성되어 재사용 가능. 모든 UI 요소가 Tailwind CSS와 shadcn/ui로 스타일링됨. Task 004(네비게이션 업데이트)와 Task 016(실제 데이터 연동)의 기초 제공."
+    },
+    {
+      "id": "2bb9a700-7495-4b9a-a56f-0f0f2af1d02a",
+      "name": "Task 003-B: 대시보드 더미 데이터 준비",
+      "description": "대시보드에 사용할 더미 이벤트 데이터 생성. 주최 이벤트와 참여 이벤트 샘플 데이터.",
+      "notes": "Task 017에서 실제 DB 데이터로 교체될 예정",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2026-03-03T07:39:48.108Z",
+      "updatedAt": "2026-03-03T07:39:48.108Z",
+      "relatedFiles": [
+        {
+          "path": "lib/dummy-data.ts",
+          "type": "CREATE",
+          "description": "더미 데이터 파일 신규 생성"
+        }
+      ],
+      "implementationGuide": "1. lib/dummy-data.ts 파일 생성\\n2. 더미 데이터 구조:\\n   - hostedEvents: Event[] (4개)\\n   - participatedEvents: Event[] (3개)\\n3. 각 이벤트 객체:\\n   - id, title, date, location, participantCount, maxMembers, status\\n4. 다양한 상태 포함:\\n   - scheduled 2개\\n   - completed 2개\\n   - cancelled 1개\\n5. 현실적인 데이터 (날짜는 현재 기준)\\n6. TypeScript 타입 지정\\n\\nExample:\\nexport const dummyEvents = { hostedEvents: [...], participatedEvents: [...] }",
+      "verificationCriteria": "1. lib/dummy-data.ts 파일 생성\\n2. hostedEvents 최소 3개\\n3. participatedEvents 최소 2개\\n4. 다양한 상태 포함\\n5. TypeScript 타입 명확\\n6. export const로 접근 가능",
+      "analysisResult": "Task 003 완료 후: app/protected/page.tsx가 더미 데이터 기반 대시보드로 구현됨. EventCard 컴포넌트가 생성되어 재사용 가능. 모든 UI 요소가 Tailwind CSS와 shadcn/ui로 스타일링됨. Task 004(네비게이션 업데이트)와 Task 016(실제 데이터 연동)의 기초 제공."
+    },
+    {
+      "id": "43fe466f-9c69-4398-9743-221845d7ef93",
+      "name": "Task 003-C: 대시보드 페이지 UI 구현",
+      "description": "app/protected/page.tsx를 대시보드로 재작성. 더미 데이터 기반 UI 구현. EventCard 컴포넌트 사용.",
+      "notes": "실제 데이터 조회 없음. Task 017에서 Supabase 쿼리 추가",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "65881aab-5ab2-4250-b16c-fcdc7013473f"
+        },
+        {
+          "taskId": "2bb9a700-7495-4b9a-a56f-0f0f2af1d02a"
+        }
+      ],
+      "createdAt": "2026-03-03T07:39:48.108Z",
+      "updatedAt": "2026-03-03T07:39:48.108Z",
+      "relatedFiles": [
+        {
+          "path": "app/protected/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "대시보드 페이지 전체 재작성"
+        },
+        {
+          "path": "components/events/event-card.tsx",
+          "type": "DEPENDENCY",
+          "description": "EventCard 컴포넌트 사용"
+        },
+        {
+          "path": "lib/dummy-data.ts",
+          "type": "DEPENDENCY",
+          "description": "더미 데이터 import"
+        }
+      ],
+      "implementationGuide": "1. app/protected/page.tsx 전체 교체\\n2. 페이지 구조:\\n   - 'new 모임 만들기' 버튼 (상단 우측)\\n   - '내가 만든 이벤트' 섹션\\n   - '내가 참여한 이벤트' 섹션\\n3. 각 섹션:\\n   - 제목 (h2)\\n   - 이벤트 카드 그리드 (grid-cols-1 md:grid-cols-2)\\n   - 빈 상태: 이벤트 없을 때 '아직 이벤트가 없습니다' 메시지\\n4. 버튼 동작:\\n   - '새 모임 만들기': onclick 없음 (Task 005에서 연결)\\n   - EventCard: onclick 없음\\n5. import dummyEvents from lib/dummy-data\\n6. 서버 컴포넌트\\n\\nNote: 'use client' 없음 (더미 데이터만 사용하므로 서버 컴포넌트 가능)",
+      "verificationCriteria": "1. app/protected/page.tsx 전체 재작성됨\\n2. '새 모임 만들기' 버튼 표시\\n3. 두 섹션(만든 이벤트, 참여 이벤트) 표시\\n4. 각 섹션에 EventCard 그리드\\n5. 빈 상태 메시지 표시\\n6. TypeScript 컴파일 성공\\n7. ESLint 통과\\n8. npm run dev에서 렌더링 정상",
+      "analysisResult": "Task 003 완료 후: app/protected/page.tsx가 더미 데이터 기반 대시보드로 구현됨. EventCard 컴포넌트가 생성되어 재사용 가능. 모든 UI 요소가 Tailwind CSS와 shadcn/ui로 스타일링됨. Task 004(네비게이션 업데이트)와 Task 016(실제 데이터 연동)의 기초 제공."
+    },
+    {
+      "id": "e627e095-a286-483d-8fa1-47c5865ceff9",
+      "name": "Task 004-A: 네비게이션 헤더 개선",
+      "description": "app/protected/layout.tsx에서 네비게이션 헤더 업데이트. 서비스명 변경, DeployButton 제거, 메뉴 구조 정리.",
+      "notes": "우측 메뉴(프로필, 로그아웃)는 AuthButton 컴포넌트에서 처리. 네비게이션에서는 AuthButton만 표시.",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2026-03-03T07:40:03.221Z",
+      "updatedAt": "2026-03-03T07:40:03.221Z",
+      "relatedFiles": [
+        {
+          "path": "app/protected/layout.tsx",
+          "type": "TO_MODIFY",
+          "description": "네비게이션 헤더 수정 (line 17-34)",
+          "lineStart": 17,
+          "lineEnd": 34
+        }
+      ],
+      "implementationGuide": "1. app/protected/layout.tsx 네비게이션 섹션 수정 (line 18-34)\\n2. 변경 사항:\\n   - 서비스명: 'Next.js Supabase Starter' → '모임 이벤트 관리'\\n   - DeployButton 제거\\n   - 좌측: 서비스명 + 홈 링크\\n   - 우측: AuthButton (유지)\\n3. 레이아웃:\\n   - flex justify-between items-center\\n   - 좌측: logo + home 링크\\n   - 우측: AuthButton\\n4. 스타일: 기존 Tailwind 유지",
+      "verificationCriteria": "1. 서비스명이 '모임 이벤트 관리'로 변경됨\\n2. DeployButton 제거됨\\n3. AuthButton 유지\\n4. 헤더 레이아웃 유지\\n5. TypeScript 컴파일 성공\\n6. ESLint 통과",
+      "analysisResult": "Task 004 완료 후: app/protected/layout.tsx가 프로덕션 수준의 깔끔한 네비게이션으로 업데이트됨. 서비스명이 '모임 이벤트 관리'로 변경되고, 스타터 컴포넌트가 제거됨. 대시보드와 일관된 레이아웃 제공. Task 005(이벤트 생성 페이지)의 기초 제공."
+    },
+    {
+      "id": "a4952392-d4db-498f-871d-dbe9ffb27097",
+      "name": "Task 004-B: 홈 링크 추가 및 메뉴 정리",
+      "description": "네비게이션에 홈 링크 추가. 좌측 메뉴에 서비스명 옆에 '홈' 링크 추가하여 대시보드로 이동 가능하게.",
+      "notes": "프로필 링크는 Task 018에서 추가 예정",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2026-03-03T07:40:03.221Z",
+      "updatedAt": "2026-03-03T07:40:03.221Z",
+      "relatedFiles": [
+        {
+          "path": "app/protected/layout.tsx",
+          "type": "TO_MODIFY",
+          "description": "홈 링크 추가"
+        }
+      ],
+      "implementationGuide": "1. 네비게이션 좌측 섹션에 홈 링크 추가\\n2. 구조:\\n   - div.flex.gap-5.items-center\\n     - Link href='/protected' → '모임 이벤트 관리'\\n     - Link href='/protected' text='홈' (선택적)\\n3. 스타일:\\n   - font-semibold 유지\\n   - 링크 hover:underline\\n4. 반응형: 모바일에서 텍스트 크기 조정\\n\\nNote: '모임 이벤트 관리' 텍스트 자체가 로고 역할. 클릭하면 홈(/protected)으로 이동.",
+      "verificationCriteria": "1. 로고/서비스명 클릭 시 /protected로 이동\\n2. 링크 활성화됨\\n3. 모바일 반응형 정상\\n4. TypeScript 컴파일 성공\\n5. ESLint 통과",
+      "analysisResult": "Task 004 완료 후: app/protected/layout.tsx가 프로덕션 수준의 깔끔한 네비게이션으로 업데이트됨. 서비스명이 '모임 이벤트 관리'로 변경되고, 스타터 컴포넌트가 제거됨. 대시보드와 일관된 레이아웃 제공. Task 005(이벤트 생성 페이지)의 기초 제공."
+    },
+    {
+      "id": "7db82c8a-a4b7-4a2d-b7a1-10eaf0c2bc29",
+      "name": "Task 004-C: 레이아웃 최종 정리",
+      "description": "protected/layout.tsx의 나머지 부분 정리. Hero, FetchDataSteps 등 스타터 컴포넌트 제거. 기본 구조만 유지.",
+      "notes": "footer는 선택적으로 제거 가능. 현재 유지.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "e627e095-a286-483d-8fa1-47c5865ceff9"
+        }
+      ],
+      "createdAt": "2026-03-03T07:40:03.221Z",
+      "updatedAt": "2026-03-03T07:40:03.221Z",
+      "relatedFiles": [
+        {
+          "path": "app/protected/layout.tsx",
+          "type": "TO_MODIFY",
+          "description": "스타터 컴포넌트 제거 및 레이아웃 정리"
+        }
+      ],
+      "implementationGuide": "1. app/protected/layout.tsx에서:\\n   - DeployButton import 제거\\n   - Hero, FetchDataSteps 관련 import 제거 (필요 시)\\n   - 스타터 마크업 제거\\n2. 최종 레이아웃 구조:\\n   - main.min-h-screen.flex.flex-col\\n   - nav (수정된 네비게이션)\\n   - div.flex-1.flex.flex-col {children}\\n   - footer (기본 유지 또는 제거)\\n3. children 렌더링은 유지\\n4. 스타일링 일관성 확인",
+      "verificationCriteria": "1. 스타터 코드 제거됨\\n2. 기본 레이아웃 구조 유지\\n3. children 정상 렌더링\\n4. 네비게이션 정상 표시\\n5. TypeScript 컴파일 성공\\n6. ESLint 통과\\n7. npm run dev에서 정상 표시",
+      "analysisResult": "Task 004 완료 후: app/protected/layout.tsx가 프로덕션 수준의 깔끔한 네비게이션으로 업데이트됨. 서비스명이 '모임 이벤트 관리'로 변경되고, 스타터 컴포넌트가 제거됨. 대시보드와 일관된 레이아웃 제공. Task 005(이벤트 생성 페이지)의 기초 제공."
+    },
+    {
+      "id": "03625799-de82-4b67-ac05-06b739779fac",
+      "name": "Task 002-A: 랜딩 페이지 헤더 및 기본 구조",
+      "description": "app/page.tsx의 기본 구조 및 헤더 구현. 네비게이션, 서비스명, 소개 텍스트 작성.",
+      "notes": "'use client' 불필요 (AuthButton이 있으면 추가 가능)",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2026-03-03T07:40:19.921Z",
+      "updatedAt": "2026-03-03T07:40:19.921Z",
+      "relatedFiles": [
+        {
+          "path": "app/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "랜딩 페이지 전체 재작성"
+        }
+      ],
+      "implementationGuide": "1. app/page.tsx 전체 재작성\\n2. 페이지 구조:\\n   - main.min-h-screen.flex.flex-col\\n   - nav: 헤더 (로그인/회원가입 버튼)\\n   - section: 영웅 섹션\\n     - h1: '모임 이벤트 관리'\\n     - p: '소규모 모임을 쉽게 관리하세요'\\n3. 헤더 구성:\\n   - 좌측: 로고/서비스명\\n   - 우측: AuthButton\\n4. 영웅 섹션:\\n   - 텍스트 중앙 정렬\\n   - 반응형 폰트 크기\\n5. 여러 버튼은 Task 002-C에서",
+      "verificationCriteria": "1. 기본 페이지 구조 구현됨\\n2. 헤더 표시됨\\n3. 영웅 섹션 표시됨\\n4. Tailwind CSS로 스타일 적용\\n5. TypeScript 컴파일 성공\\n6. ESLint 통과",
+      "analysisResult": "Task 002 완료 후: app/page.tsx가 전문적인 랜딩 페이지로 구현됨. 서비스 소개, 5개 기능 카드, CTA 버튼이 포함됨. 로그인 상태 감지로 이미 로그인한 사용자는 대시보드로 리다이렉트. 모바일/데스크톱 모두 반응형 지원. Phase 1 완료."
+    },
+    {
+      "id": "8e221725-3131-4877-8b6b-8f9104d65e17",
+      "name": "Task 002-B: 기능 소개 카드 5개 구현",
+      "description": "5개의 기능 소개 카드 구현. 이벤트, 참여자 관리, 공지, 카풀, 정산 기능 소개.",
+      "notes": "각 카드는 독립적인 컴포넌트. 클릭 동작 없음.",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2026-03-03T07:40:19.921Z",
+      "updatedAt": "2026-03-03T07:40:19.921Z",
+      "relatedFiles": [
+        {
+          "path": "components/landing/feature-card.tsx",
+          "type": "CREATE",
+          "description": "기능 카드 컴포넌트 신규 생성"
+        }
+      ],
+      "implementationGuide": "1. components/landing/feature-card.tsx 생성\\n2. FeatureCard Props:\\n   - icon: React.ReactNode\\n   - title: string\\n   - description: string\\n3. 5개 카드 렌더링:\\n   - 이벤트 생성/관리 (Calendar icon)\\n   - 참여자 관리 (Users icon)\\n   - 공지 (Bell icon)\\n   - 카풀 매칭 (Car icon)\\n   - 1/N 정산 (DollarSign icon)\\n4. 아이콘: lucide-react 사용\\n5. 카드 스타일: Card from shadcn/ui\\n6. 그리드: grid-cols-1 md:grid-cols-2 lg:grid-cols-5\\n7. 반응형 레이아웃",
+      "verificationCriteria": "1. FeatureCard 컴포넌트 생성됨\\n2. 5개 카드 렌더링됨\\n3. 아이콘 표시됨\\n4. 반응형 그리드 적용\\n5. Tailwind 스타일\\n6. TypeScript 컴파일 성공",
+      "analysisResult": "Task 002 완료 후: app/page.tsx가 전문적인 랜딩 페이지로 구현됨. 서비스 소개, 5개 기능 카드, CTA 버튼이 포함됨. 로그인 상태 감지로 이미 로그인한 사용자는 대시보드로 리다이렉트. 모바일/데스크톱 모두 반응형 지원. Phase 1 완료."
+    },
+    {
+      "id": "aa473c90-f018-4b71-88b2-0d70dccff7eb",
+      "name": "Task 002-C: CTA 버튼 및 로그인 상태 처리",
+      "description": "랜딩 페이지의 CTA 버튼 추가. 로그인/회원가입 버튼 구현. 이미 로그인한 사용자는 대시보드로 리다이렉트.",
+      "notes": "이미 로그인한 사용자는 자동으로 /protected로 리다이렉트됨",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "03625799-de82-4b67-ac05-06b739779fac"
+        },
+        {
+          "taskId": "8e221725-3131-4877-8b6b-8f9104d65e17"
+        }
+      ],
+      "createdAt": "2026-03-03T07:40:19.921Z",
+      "updatedAt": "2026-03-03T07:40:19.921Z",
+      "relatedFiles": [
+        {
+          "path": "app/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "CTA 버튼 및 인증 로직 추가"
+        }
+      ],
+      "implementationGuide": "1. app/page.tsx에서:\\n   - Suspense로 AuthButton과 함께 로그인 상태 확인\\n   - 'use client' 추가\\n   - async function checkAuth() - 사용자 확인\\n   - redirect('/protected')으로 이미 로그인한 사용자 처리\\n2. CTA 섹션 추가:\\n   - div: 중앙 정렬\\n   - Button: '로그인' → href='/auth/login'\\n   - Button: '회원가입' → href='/auth/sign-up'\\n   - gap-4, button:px-8\\n3. Suspense fallback: 로딩 상태\\n4. 배치:\\n   - 영웅 섹션 아래\\n   - 기능 카드 위\\n\\nNote: Suspense 패턴은 protected/page.tsx의 UserProfile 패턴 참고",
+      "verificationCriteria": "1. '로그인' 버튼 표시 및 /auth/login으로 링크\\n2. '회원가입' 버튼 표시 및 /auth/sign-up으로 링크\\n3. 인증된 사용자는 /protected로 리다이렉트\\n4. Suspense 로딩 상태 처리\\n5. 반응형 버튼 배치\\n6. TypeScript 컴파일 성공\\n7. ESLint 통과",
+      "analysisResult": "Task 002 완료 후: app/page.tsx가 전문적인 랜딩 페이지로 구현됨. 서비스 소개, 5개 기능 카드, CTA 버튼이 포함됨. 로그인 상태 감지로 이미 로그인한 사용자는 대시보드로 리다이렉트. 모바일/데스크톱 모두 반응형 지원. Phase 1 완료."
+    }
+  ]
+}

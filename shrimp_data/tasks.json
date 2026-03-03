@@ -283,6 +283,287 @@
       "implementationGuide": "1. app/page.tsx에서:\\n   - Suspense로 AuthButton과 함께 로그인 상태 확인\\n   - 'use client' 추가\\n   - async function checkAuth() - 사용자 확인\\n   - redirect('/protected')으로 이미 로그인한 사용자 처리\\n2. CTA 섹션 추가:\\n   - div: 중앙 정렬\\n   - Button: '로그인' → href='/auth/login'\\n   - Button: '회원가입' → href='/auth/sign-up'\\n   - gap-4, button:px-8\\n3. Suspense fallback: 로딩 상태\\n4. 배치:\\n   - 영웅 섹션 아래\\n   - 기능 카드 위\\n\\nNote: Suspense 패턴은 protected/page.tsx의 UserProfile 패턴 참고",
       "verificationCriteria": "1. '로그인' 버튼 표시 및 /auth/login으로 링크\\n2. '회원가입' 버튼 표시 및 /auth/sign-up으로 링크\\n3. 인증된 사용자는 /protected로 리다이렉트\\n4. Suspense 로딩 상태 처리\\n5. 반응형 버튼 배치\\n6. TypeScript 컴파일 성공\\n7. ESLint 통과",
       "analysisResult": "Task 002 완료 후: app/page.tsx가 전문적인 랜딩 페이지로 구현됨. 서비스 소개, 5개 기능 카드, CTA 버튼이 포함됨. 로그인 상태 감지로 이미 로그인한 사용자는 대시보드로 리다이렉트. 모바일/데스크톱 모두 반응형 지원. Phase 1 완료."
+    },
+    {
+      "id": "bcc9b8a7-fab6-4e67-ab22-c3125dceb473",
+      "name": "Task 005-A: 이벤트 생성 폼 컴포넌트 구현",
+      "description": "app/protected/events/new 디렉토리에서 사용할 이벤트 생성 폼 컴포넌트. 제목, 설명, 날짜/시간, 장소, 최대 인원, 승인 방식 필드 포함. 더미 데이터만 사용.",
+      "notes": "Server Action 없음 (Task 016에서 추가). 클릭 시 동작 없음.",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2026-03-03T13:16:15.696Z",
+      "updatedAt": "2026-03-03T13:16:15.696Z",
+      "relatedFiles": [
+        {
+          "path": "components/events/event-form.tsx",
+          "type": "CREATE",
+          "description": "이벤트 폼 컴포넌트 신규 생성"
+        }
+      ],
+      "implementationGuide": "1. 파일 생성: components/events/event-form.tsx\\n2. Props: { initialData?: Event, onSubmit?: (data) => void }\\n3. 폼 필드:\\n   - 제목 (필수, max 100자, 글자수 카운터)\\n   - 설명 (선택, textarea)\\n   - 날짜/시간 (필수, datetime-local)\\n   - 장소 (필수)\\n   - 최대 인원 (선택, number)\\n   - 승인 방식 토글 (자동 승인 / 주최자 승인)\\n4. 버튼: 취소, 만들기/수정 (클릭 시 onSubmit 호출)\\n5. 반응형 레이아웃",
+      "verificationCriteria": "1. 모든 필드 표시됨\\n2. 제목 글자수 카운터\\n3. 취소/만들기 버튼\\n4. TypeScript 컴파일 성공\\n5. 반응형 레이아웃",
+      "analysisResult": "Task 005 완료 후: 이벤트 생성 페이지가 더미 데이터 기반으로 UI 완성. 폼 필드 모두 표시. Server Action은 Task 016에서 추가."
+    },
+    {
+      "id": "3fe33814-efac-4c34-9ae3-5f14ac1888ea",
+      "name": "Task 005-B: 이벤트 생성 페이지 구현",
+      "description": "app/protected/events/new/page.tsx에서 이벤트 생성 페이지 구현. EventForm 컴포넌트 사용, 더미 데이터 기반.",
+      "notes": "Server Action 없음. UI만 구현.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "bcc9b8a7-fab6-4e67-ab22-c3125dceb473"
+        }
+      ],
+      "createdAt": "2026-03-03T13:16:15.696Z",
+      "updatedAt": "2026-03-03T13:16:15.696Z",
+      "relatedFiles": [
+        {
+          "path": "app/protected/events/new/page.tsx",
+          "type": "CREATE",
+          "description": "이벤트 생성 페이지 신규 생성"
+        }
+      ],
+      "implementationGuide": "1. 파일 생성: app/protected/events/new/page.tsx\\n2. 페이지 구조:\\n   - 제목: '새 모임 만들기'\\n   - EventForm 컴포넌트\\n3. 폼 제출:\\n   - 현재는 클릭만 해도 동작 없음\\n   - Task 016에서 Server Action 연결\\n4. 취소 버튼: 대시보드(/protected)로 이동\\n5. 스타일: 컨테이너 최대 너비 2xl",
+      "verificationCriteria": "1. 페이지 렌더링됨\\n2. EventForm 표시됨\\n3. 취소 버튼 동작 (대시보드로 이동)\\n4. TypeScript 컴파일 성공",
+      "analysisResult": "Task 005 완료 후: 이벤트 생성 페이지가 더미 데이터 기반으로 UI 완성. 폼 필드 모두 표시. Server Action은 Task 016에서 추가."
+    },
+    {
+      "id": "960ef591-5bb8-4792-86b5-9956eebaa7a6",
+      "name": "Task 005-C: 이벤트 생성 Server Action 구현 (선행 제외)",
+      "description": "향후 Task 016에서 구현. 현재는 UI만 완성.",
+      "notes": "Phase 4 Task 016에서 구현",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "3fe33814-efac-4c34-9ae3-5f14ac1888ea"
+        }
+      ],
+      "createdAt": "2026-03-03T13:16:15.696Z",
+      "updatedAt": "2026-03-03T13:16:15.696Z",
+      "relatedFiles": [],
+      "implementationGuide": "생략 (Phase 4)",
+      "verificationCriteria": "생략",
+      "analysisResult": "Task 005 완료 후: 이벤트 생성 페이지가 더미 데이터 기반으로 UI 완성. 폼 필드 모두 표시. Server Action은 Task 016에서 추가."
+    },
+    {
+      "id": "82e64ae6-2e41-4756-ba8b-56d5ea1bd8b3",
+      "name": "Task 006: 이벤트 수정 페이지",
+      "description": "app/protected/events/[eventId]/edit/page.tsx에서 이벤트 수정 페이지. EventForm 컴포넌트 재사용, 더미 데이터로 폼 사전 로드.",
+      "notes": "동작 없음 (Task 016에서 추가)",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "bcc9b8a7-fab6-4e67-ab22-c3125dceb473"
+        }
+      ],
+      "createdAt": "2026-03-03T13:26:16.867Z",
+      "updatedAt": "2026-03-03T13:26:16.867Z",
+      "relatedFiles": [
+        {
+          "path": "app/protected/events/[eventId]/edit/page.tsx",
+          "type": "CREATE",
+          "description": "이벤트 수정 페이지"
+        }
+      ],
+      "implementationGuide": "1. 디렉토리: app/protected/events/[eventId]/edit\\n2. page.tsx: 더미 이벤트 선택 후 EventForm에 initialData로 전달\\n3. 버튼: 수정/삭제 (UI만, 동작 없음)\\n4. 취소: 이벤트 상세로 이동\\n5. Task 016에서 Server Action 추가",
+      "verificationCriteria": "1. 페이지 렌더링\\n2. 폼에 더미 데이터 채워짐\\n3. 수정/삭제 버튼 표시",
+      "analysisResult": "Task 006-008 완료 후: 이벤트 수정/공개 페이지와 허브 탭 구조 완성. UI 요소 모두 표시."
+    },
+    {
+      "id": "db7f9d54-0329-4283-9bdc-750b18e31b6d",
+      "name": "Task 007: 공개 이벤트 상세 페이지",
+      "description": "app/events/share/[token]/page.tsx에서 비인증 사용자도 접근 가능한 공개 이벤트 상세 페이지.",
+      "notes": "로그인 상태 감지는 더미 로직 (Task 016에서 실제 구현)",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "cf1db824-7f7e-4d3d-8801-cab6f1c68efb"
+        }
+      ],
+      "createdAt": "2026-03-03T13:26:16.867Z",
+      "updatedAt": "2026-03-03T13:26:16.867Z",
+      "relatedFiles": [
+        {
+          "path": "app/events/share/[token]/page.tsx",
+          "type": "CREATE",
+          "description": "공개 이벤트 상세 페이지"
+        }
+      ],
+      "implementationGuide": "1. 디렉토리: app/events/share/[token]\\n2. 더미 데이터 기반 이벤트 정보 표시\\n3. 정보: 제목, 날짜, 장소, 설명, 참여자 수\\n4. 버튼 (상태별): 비로그인/참여 가능/승인 대기/참여/정원 마감\\n5. Task 001에서 공개 경로 설정됨",
+      "verificationCriteria": "1. 공개 경로 비인증 접근 가능\\n2. 이벤트 정보 표시\\n3. 상태별 버튼 표시",
+      "analysisResult": "Task 006-008 완료 후: 이벤트 수정/공개 페이지와 허브 탭 구조 완성. UI 요소 모두 표시."
+    },
+    {
+      "id": "7bbac993-cfb2-48fc-b022-60f086d74ebe",
+      "name": "Task 008: 이벤트 허브 셸 (탭 네비게이션)",
+      "description": "app/protected/events/[eventId]/page.tsx와 layout.tsx에서 이벤트 허브 탭 구조. EventHeader + Tabs 컴포넌트.",
+      "notes": "각 탭은 placeholder div만 추가. 콘텐츠는 이후 Task에서.",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2026-03-03T13:26:16.867Z",
+      "updatedAt": "2026-03-03T13:26:16.867Z",
+      "relatedFiles": [
+        {
+          "path": "app/protected/events/[eventId]/layout.tsx",
+          "type": "CREATE",
+          "description": "이벤트 허브 레이아웃"
+        },
+        {
+          "path": "app/protected/events/[eventId]/page.tsx",
+          "type": "CREATE",
+          "description": "이벤트 허브 탭 페이지"
+        },
+        {
+          "path": "components/events/event-header.tsx",
+          "type": "CREATE",
+          "description": "이벤트 헤더 컴포넌트"
+        }
+      ],
+      "implementationGuide": "1. layout.tsx: EventHeader 컴포넌트\\n2. page.tsx: Tabs 컴포넌트 (shadcn)\\n3. 탭: 공지, 참여자(주최자만), 카풀, 정산, 설정(주최자만)\\n4. 각 탭 콘텐츠는 Task 009-012에서",
+      "verificationCriteria": "1. EventHeader 컴포넌트 생성\\n2. 탭 네비게이션 표시\\n3. 5개 탭 모두 보임",
+      "analysisResult": "Task 006-008 완료 후: 이벤트 수정/공개 페이지와 허브 탭 구조 완성. UI 요소 모두 표시."
+    },
+    {
+      "id": "79a62d81-baa6-46d6-ada9-5cee193c9fe8",
+      "name": "Task 009: 공지 탭 UI",
+      "description": "app/protected/events/[eventId]/announcements/page.tsx에서 공지 탭 구현. 공지 목록과 작성 폼 (주최자만).",
+      "notes": "더미 데이터만 사용. Server Action은 Task 017에서.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "7bbac993-cfb2-48fc-b022-60f086d74ebe"
+        }
+      ],
+      "createdAt": "2026-03-03T13:26:33.029Z",
+      "updatedAt": "2026-03-03T13:26:33.029Z",
+      "relatedFiles": [
+        {
+          "path": "app/protected/events/[eventId]/announcements/page.tsx",
+          "type": "CREATE",
+          "description": "공지 탭 페이지"
+        },
+        {
+          "path": "components/events/announcement-card.tsx",
+          "type": "CREATE",
+          "description": "공지 카드"
+        },
+        {
+          "path": "components/events/announcement-form.tsx",
+          "type": "CREATE",
+          "description": "공지 작성 폼"
+        }
+      ],
+      "implementationGuide": "1. 페이지: app/protected/events/[eventId]/announcements/page.tsx\\n2. 컴포넌트: AnnouncementCard, AnnouncementForm\\n3. 공지 목록: 고정 공지 상단, 카드 형식\\n4. 작성 폼: 제목, 내용, 고정 토글 (주최자만)\\n5. 버튼: 수정/삭제/고정 (더미 상태)",
+      "verificationCriteria": "1. 공지 목록 표시\\n2. 고정 공지 상단 표시\\n3. 작성 폼 (주최자만)\\n4. 수정/삭제 버튼",
+      "analysisResult": "Task 009-012 완료 후: 이벤트 허브의 모든 탭 UI 완성. 공지, 참여자, 카풀, 정산 모두 더미 데이터 기반으로 표시. Phase 2 UI/UX 완성."
+    },
+    {
+      "id": "db7d6c5d-19b9-4482-a240-59d47f0297b0",
+      "name": "Task 010: 참여자 탭 UI",
+      "description": "app/protected/events/[eventId]/members/page.tsx에서 참여자 관리 탭. 승인 대기/승인/대기자 목록.",
+      "notes": "더미 상태. Server Action은 Task 017에서.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "7bbac993-cfb2-48fc-b022-60f086d74ebe"
+        }
+      ],
+      "createdAt": "2026-03-03T13:26:33.029Z",
+      "updatedAt": "2026-03-03T13:26:33.029Z",
+      "relatedFiles": [
+        {
+          "path": "app/protected/events/[eventId]/members/page.tsx",
+          "type": "CREATE",
+          "description": "참여자 관리 탭"
+        },
+        {
+          "path": "components/events/member-list.tsx",
+          "type": "CREATE",
+          "description": "참여자 목록"
+        }
+      ],
+      "implementationGuide": "1. 페이지: app/protected/events/[eventId]/members/page.tsx\\n2. 섹션:\\n   - 승인 대기(pending): 이름, 신청일, 승인/거절 버튼\\n   - 승인됨(approved): 이름, 강퇴 버튼\\n   - 대기자(waitlisted): 이름, 승인 가능 시 목록 이동\\n3. 주최자 외 접근 시 권한 오류\\n4. 더미 데이터 사용",
+      "verificationCriteria": "1. 3개 섹션 표시\\n2. 각 섹션에 목록\\n3. 버튼 (승인/거절/강퇴)\\n4. 권한 오류 메시지",
+      "analysisResult": "Task 009-012 완료 후: 이벤트 허브의 모든 탭 UI 완성. 공지, 참여자, 카풀, 정산 모두 더미 데이터 기반으로 표시. Phase 2 UI/UX 완성."
+    },
+    {
+      "id": "bd3d2223-ea14-447c-948d-22e38bbb9349",
+      "name": "Task 011: 카풀 탭 UI",
+      "description": "app/protected/events/[eventId]/carpool/page.tsx에서 카풀 탭. 운전자/탑승자 등록 폼과 매칭 현황.",
+      "notes": "더미 상태. 매칭 로직은 Task 017에서.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "7bbac993-cfb2-48fc-b022-60f086d74ebe"
+        }
+      ],
+      "createdAt": "2026-03-03T13:26:33.029Z",
+      "updatedAt": "2026-03-03T13:26:33.029Z",
+      "relatedFiles": [
+        {
+          "path": "app/protected/events/[eventId]/carpool/page.tsx",
+          "type": "CREATE",
+          "description": "카풀 탭"
+        },
+        {
+          "path": "components/events/carpool-group.tsx",
+          "type": "CREATE",
+          "description": "카풀 그룹"
+        },
+        {
+          "path": "components/events/carpool-driver-form.tsx",
+          "type": "CREATE",
+          "description": "운전자 폼"
+        },
+        {
+          "path": "components/events/carpool-passenger-form.tsx",
+          "type": "CREATE",
+          "description": "탑승 폼"
+        }
+      ],
+      "implementationGuide": "1. 페이지: app/protected/events/[eventId]/carpool/page.tsx\\n2. 컴포넌트:\\n   - CarpoolGroup: 지역별 그룹 카드\\n   - DriverForm: 운전자 등록\\n   - PassengerForm: 탑승자 등록\\n3. 화면:\\n   - 매칭 완료 카풀 그룹\\n   - 운전자 등록 폼 (선택적)\\n   - 탑승 희망 폼 (선택적)\\n   - 매칭 버튼 (주최자만)\\n4. 더미 데이터",
+      "verificationCriteria": "1. 카풀 그룹 표시\\n2. 운전자/탑승 폼\\n3. 매칭 버튼\\n4. 지역별 그룹화",
+      "analysisResult": "Task 009-012 완료 후: 이벤트 허브의 모든 탭 UI 완성. 공지, 참여자, 카풀, 정산 모두 더미 데이터 기반으로 표시. Phase 2 UI/UX 완성."
+    },
+    {
+      "id": "0e6fbdd7-7c7f-4405-8960-afe8084990c4",
+      "name": "Task 012: 정산 탭 UI",
+      "description": "app/protected/events/[eventId]/settlement/page.tsx에서 정산 탭. 비용 항목 추가, 1/N 계산, 납부 현황.",
+      "notes": "더미 상태. 계산은 Task 017에서.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "7bbac993-cfb2-48fc-b022-60f086d74ebe"
+        }
+      ],
+      "createdAt": "2026-03-03T13:26:33.029Z",
+      "updatedAt": "2026-03-03T13:26:33.029Z",
+      "relatedFiles": [
+        {
+          "path": "app/protected/events/[eventId]/settlement/page.tsx",
+          "type": "CREATE",
+          "description": "정산 탭"
+        },
+        {
+          "path": "components/events/settlement-item-form.tsx",
+          "type": "CREATE",
+          "description": "항목 폼"
+        },
+        {
+          "path": "components/events/settlement-summary.tsx",
+          "type": "CREATE",
+          "description": "정산 요약"
+        },
+        {
+          "path": "components/events/payment-status-table.tsx",
+          "type": "CREATE",
+          "description": "납부 현황"
+        }
+      ],
+      "implementationGuide": "1. 페이지: app/protected/events/[eventId]/settlement/page.tsx\\n2. 컴포넌트:\\n   - SettlementItemForm: 항목 추가\\n   - SettlementSummary: 1인당 금액\\n   - PaymentStatusTable: 납부 현황\\n3. 화면:\\n   - 비용 항목 목록\\n   - 항목 추가 폼 (주최자만)\\n   - 1/N 계산 버튼 (주최자만)\\n   - 요약 카드\\n   - 납부 현황 테이블\\n4. 더미 데이터",
+      "verificationCriteria": "1. 비용 항목 목록\\n2. 항목 추가 폼\\n3. 1/N 계산 버튼\\n4. 요약 카드\\n5. 납부 현황 테이블",
+      "analysisResult": "Task 009-012 완료 후: 이벤트 허브의 모든 탭 UI 완성. 공지, 참여자, 카풀, 정산 모두 더미 데이터 기반으로 표시. Phase 2 UI/UX 완성."
     }
   ]
 }

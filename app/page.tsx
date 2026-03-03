@@ -8,13 +8,7 @@ import { Button } from "@/components/ui/button"
 import { ThemeSwitcher } from "@/components/theme-switcher"
 import { createClient } from "@/lib/supabase/server"
 import { hasEnvVars } from "@/lib/utils"
-import {
-  Bell,
-  Calendar,
-  DollarSign,
-  Users,
-  Wind,
-} from "lucide-react"
+import { Bell, Calendar, DollarSign, Users, Wind } from "lucide-react"
 
 async function CheckAuth() {
   if (!hasEnvVars) {
@@ -108,7 +102,11 @@ export default function Home() {
                 </Button>
               </Link>
               <Link href="/auth/sign-up">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto"
+                >
                   회원가입
                 </Button>
               </Link>

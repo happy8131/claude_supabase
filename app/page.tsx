@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { redirect } from "next/navigation"
 import { Suspense } from "react"
 
 import { AuthButton } from "@/components/auth-button"
@@ -10,22 +9,38 @@ import { createClient } from "@/lib/supabase/server"
 import { hasEnvVars } from "@/lib/utils"
 import { Bell, Calendar, DollarSign, Users, Wind } from "lucide-react"
 
-async function CheckAuth() {
+async function CtaSection() {
   if (!hasEnvVars) {
     return null
   }
 
-  // 이미 로그인한 사용자는 대시보드로 리다이렉트
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
   if (user) {
-    redirect("/protected")
+    return (
+      <Link href="/protected">
+        <Button size="lg">대시보드로 이동</Button>
+      </Link>
+    )
   }
 
-  return null
+  return (
+    <section className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+      <Link href="/auth/login">
+        <Button size="lg" className="w-full sm:w-auto">
+          로그인
+        </Button>
+      </Link>
+      <Link href="/auth/sign-up">
+        <Button size="lg" variant="outline" className="w-full sm:w-auto">
+          회원가입
+        </Button>
+      </Link>
+    </section>
+  )
 }
 
 export default function Home() {
@@ -95,22 +110,9 @@ export default function Home() {
             </section>
 
             {/* CTA 버튼 */}
-            <section className="flex flex-col gap-4 sm:flex-row sm:gap-6">
-              <Link href="/auth/login">
-                <Button size="lg" className="w-full sm:w-auto">
-                  로그인
-                </Button>
-              </Link>
-              <Link href="/auth/sign-up">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full sm:w-auto"
-                >
-                  회원가입
-                </Button>
-              </Link>
-            </section>
+            <Suspense>
+              <CtaSection />
+            </Suspense>
           </div>
         </div>
 
@@ -130,10 +132,6 @@ export default function Home() {
           <ThemeSwitcher />
         </footer>
       </div>
-
-      <Suspense>
-        <CheckAuth />
-      </Suspense>
     </main>
   )
 }

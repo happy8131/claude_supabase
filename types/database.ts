@@ -14,6 +14,243 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string | null
+          event_id: string
+          id: string
+          is_pinned: boolean
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string | null
+          event_id: string
+          id?: string
+          is_pinned?: boolean
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string | null
+          event_id?: string
+          id?: string
+          is_pinned?: boolean
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "announcements_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      carpool_drivers: {
+        Row: {
+          available_seats: number
+          created_at: string | null
+          current_seats: number
+          departure_area: string
+          departure_time: string | null
+          driver_id: string
+          event_id: string
+          id: string
+        }
+        Insert: {
+          available_seats: number
+          created_at?: string | null
+          current_seats?: number
+          departure_area: string
+          departure_time?: string | null
+          driver_id: string
+          event_id: string
+          id?: string
+        }
+        Update: {
+          available_seats?: number
+          created_at?: string | null
+          current_seats?: number
+          departure_area?: string
+          departure_time?: string | null
+          driver_id?: string
+          event_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carpool_drivers_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carpool_drivers_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      carpool_passengers: {
+        Row: {
+          created_at: string | null
+          departure_area: string
+          driver_id: string | null
+          event_id: string
+          id: string
+          passenger_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          departure_area: string
+          driver_id?: string | null
+          event_id: string
+          id?: string
+          passenger_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string | null
+          departure_area?: string
+          driver_id?: string | null
+          event_id?: string
+          id?: string
+          passenger_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "carpool_passengers_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "carpool_drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carpool_passengers_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "carpool_passengers_passenger_id_fkey"
+            columns: ["passenger_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_members: {
+        Row: {
+          event_id: string
+          id: string
+          joined_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          joined_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          joined_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_members_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          event_date: string
+          host_id: string
+          id: string
+          location: string
+          max_members: number | null
+          require_approval: boolean
+          share_token: string
+          status: string
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          event_date: string
+          host_id: string
+          id?: string
+          location: string
+          max_members?: number | null
+          require_approval?: boolean
+          share_token?: string
+          status?: string
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          event_date?: string
+          host_id?: string
+          id?: string
+          location?: string
+          max_members?: number | null
+          require_approval?: boolean
+          share_token?: string
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -46,6 +283,125 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
+      }
+      settlement_items: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          name: string
+          paid_by: string | null
+          settlement_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          name: string
+          paid_by?: string | null
+          settlement_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          name?: string
+          paid_by?: string | null
+          settlement_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "settlement_items_paid_by_fkey"
+            columns: ["paid_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "settlement_items_settlement_id_fkey"
+            columns: ["settlement_id"]
+            isOneToOne: false
+            referencedRelation: "settlements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      settlement_payments: {
+        Row: {
+          amount_owed: number
+          created_at: string | null
+          id: string
+          settlement_id: string
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_owed?: number
+          created_at?: string | null
+          id?: string
+          settlement_id: string
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_owed?: number
+          created_at?: string | null
+          id?: string
+          settlement_id?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "settlement_payments_settlement_id_fkey"
+            columns: ["settlement_id"]
+            isOneToOne: false
+            referencedRelation: "settlements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "settlement_payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      settlements: {
+        Row: {
+          created_at: string | null
+          event_id: string
+          id: string
+          total_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_id: string
+          id?: string
+          total_amount?: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string
+          id?: string
+          total_amount?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "settlements_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -187,6 +543,29 @@ export const Constants = {
 } as const
 
 // 편의 타입 alias
-export type Profile = Database['public']['Tables']['profiles']['Row'];
-export type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
-export type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
+export type Profile = Tables<"profiles">
+export type ProfileUpdate = TablesUpdate<"profiles">
+export type Event = Tables<"events">
+export type EventInsert = TablesInsert<"events">
+export type EventUpdate = TablesUpdate<"events">
+export type EventMember = Tables<"event_members">
+export type EventMemberInsert = TablesInsert<"event_members">
+export type EventMemberUpdate = TablesUpdate<"event_members">
+export type Announcement = Tables<"announcements">
+export type AnnouncementInsert = TablesInsert<"announcements">
+export type AnnouncementUpdate = TablesUpdate<"announcements">
+export type CarpoolDriver = Tables<"carpool_drivers">
+export type CarpoolDriverInsert = TablesInsert<"carpool_drivers">
+export type CarpoolDriverUpdate = TablesUpdate<"carpool_drivers">
+export type CarpoolPassenger = Tables<"carpool_passengers">
+export type CarpoolPassengerInsert = TablesInsert<"carpool_passengers">
+export type CarpoolPassengerUpdate = TablesUpdate<"carpool_passengers">
+export type Settlement = Tables<"settlements">
+export type SettlementInsert = TablesInsert<"settlements">
+export type SettlementUpdate = TablesUpdate<"settlements">
+export type SettlementItem = Tables<"settlement_items">
+export type SettlementItemInsert = TablesInsert<"settlement_items">
+export type SettlementItemUpdate = TablesUpdate<"settlement_items">
+export type SettlementPayment = Tables<"settlement_payments">
+export type SettlementPaymentInsert = TablesInsert<"settlement_payments">
+export type SettlementPaymentUpdate = TablesUpdate<"settlement_payments">

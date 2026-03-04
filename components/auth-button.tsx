@@ -1,3 +1,4 @@
+import { User } from "lucide-react"
 import Link from "next/link"
 
 import { createClient } from "@/lib/supabase/server"
@@ -15,7 +16,12 @@ export async function AuthButton() {
 
   return user ? (
     <div className="flex items-center gap-4">
-      {user.email}님 안녕하세요!
+      <Button asChild size="sm" variant="ghost">
+        <Link href="/protected/profile">
+          <User className="w-4 h-4 mr-1" />
+          프로필
+        </Link>
+      </Button>
       <LogoutButton />
     </div>
   ) : (

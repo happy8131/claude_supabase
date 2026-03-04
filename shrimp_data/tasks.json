@@ -1,221 +1,137 @@
 {
   "tasks": [
     {
-      "id": "0cb4fa56-be05-4cdc-9487-b1212f020c98",
-      "name": "EventTabNavigation 컴포넌트 생성 및 layout.tsx 수정",
-      "description": "탭 네비게이션을 공유 컴포넌트로 분리하고, layout.tsx에 통합하여 모든 nested route에서 동일한 탭 UI를 표시합니다. usePathname()으로 현재 활성 탭을 식별하고, isHost prop으로 주최자 전용 탭을 조건부 렌더링합니다.",
-      "notes": "EventHeader와 EventTabNavigation을 분리해서 layout에서 순차적으로 렌더링. Tailwind CSS의 동적 클래스 주의 (pre-computed 필요시 className 배열 활용)",
+      "id": "e0d0a586-1936-444b-803c-b0cd6dac6e8d",
+      "name": "마이그레이션 SQL 스크립트 준비",
+      "description": "Task 015 계획 문서에 정의된 SQL 마이그레이션 스크립트 5단계(ENUM 타입 정의, 8개 테이블 생성, 인덱스 생성, 트리거 설정, RLS 활성화)를 검증하고 최종 마이그레이션 스크립트 구성. 문법 검증은 실행 전 수행하되, 스크립트 자체는 Supabase에서 실행하므로 로컬 검증 불필요. 계획 파일의 SQL이 Supabase PostgreSQL 문법을 따르는지 확인.",
+      "notes": "SQL 스크립트는 계획 파일에 이미 완성되어 있으므로, 이 태스크는 검증 및 확인 작업. 계획과 실제 실행 스크립트 간의 불일치 없는지 최종 확인.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2026-03-03T15:25:24.738Z",
-      "updatedAt": "2026-03-03T15:26:06.319Z",
+      "createdAt": "2026-03-04T13:05:41.437Z",
+      "updatedAt": "2026-03-04T13:09:46.349Z",
       "relatedFiles": [
         {
-          "path": "components/events/event-tab-navigation.tsx",
-          "type": "CREATE",
-          "description": "탭 네비게이션 컴포넌트"
-        },
-        {
-          "path": "app/protected/events/[eventId]/layout.tsx",
-          "type": "TO_MODIFY",
-          "description": "EventTabNavigation 추가"
+          "path": "C:\\Users\\user\\.claude\\plans\\gentle-dazzling-bunny.md",
+          "type": "REFERENCE",
+          "description": "Task 015 마이그레이션 계획 및 SQL 스크립트",
+          "lineStart": 1,
+          "lineEnd": 999
         }
       ],
-      "implementationGuide": "1. components/events/event-tab-navigation.tsx 생성 (클라이언트 컴포넌트)\n   - usePathname() 사용해서 pathname 분석\n   - /announcements, /members, /carpool, /settlement, /settings 경로로 매핑\n   - Link 컴포넌트로 라우팅 (동일 이벤트 ID 유지)\n   - isHost prop으로 members, settings 탭 조건부 렌더링\n   - className 활용해서 active tab 하이라이트 (border-b-2 등)\n2. app/protected/events/[eventId]/layout.tsx 수정\n   - 'use client' 제거 (이미 EventHeader 있음, 필요시만 추가)\n   - EventTabNavigation 임포트 후 EventHeader 아래에 렌더링\n   - isHost를 props로 전달 (현재 layout에서 이미 계산 중)\n   - {children}으로 nested route 콘텐츠 렌더링\n3. 주의사항\n   - URL 기반이므로 searchParams 대신 pathname 사용\n   - 초기 진입 시 /events/[eventId]는 /announcements로 리다이렉트 필요",
-      "verificationCriteria": "- EventTabNavigation 컴포넌트가 usePathname()으로 현재 탭 정확히 식별\n- active 탭이 시각적으로 구분되어야 함 (border, 색상 등)\n- 주최자(isHost=true)일 때만 members, settings 탭 표시\n- 각 탭 클릭 시 URL이 정확히 변경되고, 새로고침 후에도 동일한 탭이 활성화됨\n- TypeScript 타입 에러 없음",
-      "analysisResult": "이벤트 허브 탭 UI를 클라이언트 사이드 Tabs에서 Next.js nested routing 기반으로 변경하여 URL 기반 네비게이션 구현. 각 탭이 독립적 라우트가 되어 서버에서 데이터를 페칭할 수 있도록 개선.",
-      "summary": "EventTabNavigation 컴포넌트를 usePathname() 기반으로 생성하고 layout.tsx에 통합 완료. 각 탭의 active 상태를 정확히 식별하며, 주최자 전용 탭(members, settings)은 isHost prop으로 조건부 렌더링. Link 컴포넌트를 사용한 URL 기반 라우팅 구현으로 모든 nested route 접근 시 자동으로 탭 네비게이션 표시됨.",
-      "completedAt": "2026-03-03T15:26:06.316Z"
+      "implementationGuide": "1. C:\\Users\\user\\.claude\\plans\\gentle-dazzling-bunny.md의 마이그레이션 SQL 전체 검토\\n2. ENUM 타입 4개 정의 검증 (event_status, member_status, carpool_passenger_status, payment_status)\\n3. 8개 테이블 정의 검증: events (share_token UNIQUE), event_members (event_id+user_id UNIQUE), announcements, carpool_drivers (event_id+driver_id UNIQUE), carpool_passengers (event_id+passenger_id UNIQUE), settlements (event_id UNIQUE 1:1), settlement_items, settlement_payments (settlement_id+user_id UNIQUE)\\n4. 외래키 및 CASCADE DELETE 설정 확인\\n5. 인덱스 11개 확인 (host_id, status, event_id 등)\\n6. updated_at 트리거 4개 확인 (events, announcements, settlements, settlement_payments)\\n7. RLS 활성화 8개 테이블 확인\\n8. SQL 실행 순서 (ENUM → 테이블 → 인덱스 → 트리거 → RLS) 검증",
+      "verificationCriteria": "1. 모든 ENUM 타입이 정확한 값으로 정의됨\\n2. 8개 테이블이 모두 정의됨\\n3. UNIQUE 제약이 올바르게 설정됨\\n4. 외래키가 CASCADE DELETE로 설정됨\\n5. 인덱스 11개가 모두 포함됨\\n6. 트리거 4개가 updated_at 자동 관리\\n7. RLS 활성화 명령 8개가 포함됨",
+      "analysisResult": "Task 015: Supabase 테이블 마이그레이션 - Phase 3 데이터베이스 스키마 구축의 첫 단계. 8개 신규 테이블(events, event_members, announcements, carpool_drivers, carpool_passengers, settlements, settlement_items, settlement_payments)과 4개 ENUM 타입을 생성하고, 외래키 제약, CASCADE DELETE, 인덱스, updated_at 트리거, RLS 활성화를 설정한다. Supabase MCP 도구를 활용하여 SQL 마이그레이션을 실행하고, TypeScript 타입을 자동 생성한다.",
+      "summary": "마이그레이션 SQL 스크립트 전체 검증 완료. ENUM 4개, 테이블 8개, UNIQUE 제약 6개, CASCADE DELETE FK, 인덱스 11개, 트리거 4개, RLS 활성화 8개 모두 올바르게 정의됨. SQL 실행 순서(ENUM→테이블→인덱스→트리거→RLS) 완벽함. Supabase PostgreSQL 문법 준수 확인 완료.",
+      "completedAt": "2026-03-04T13:09:46.346Z"
     },
     {
-      "id": "a943da92-59b3-4524-88b9-01e93484515f",
-      "name": "page.tsx 리다이렉트 설정",
-      "description": "기존 app/protected/events/[eventId]/page.tsx를 삭제하고, 사용자가 /events/[eventId]로 진입할 때 자동으로 /announcements로 리다이렉트되도록 설정합니다. 이는 사용자가 직접 URL을 입력하거나 외부 링크로 진입했을 때의 기본 동작입니다.",
-      "notes": "방법 2를 선택하는 이유: 서버 사이드 리다이렉트로 깜빡임 없고, 상태 유지 가능",
-      "status": "pending",
+      "id": "b66ab97c-0b07-4690-9557-1f0e28e451b1",
+      "name": "Supabase에 마이그레이션 SQL 적용",
+      "description": "Supabase MCP 도구(`mcp__supabase__apply_migration`)를 사용하여 Task 015 마이그레이션 SQL을 실행. 마이그레이션 이름은 'task_015_initial_schema'로 설정. 실행 후 에러 발생 시 즉시 원인 파악 및 복구.",
+      "notes": "MCP apply_migration은 단일 마이그레이션이므로 모든 DDL을 한 번에 실행. 실행 중 롤백 불가능하므로 SQL 검증 후 실행. Supabase에서 자동으로 마이그레이션 히스토리 관리.",
+      "status": "completed",
       "dependencies": [
         {
-          "taskId": "0cb4fa56-be05-4cdc-9487-b1212f020c98"
+          "taskId": "e0d0a586-1936-444b-803c-b0cd6dac6e8d"
         }
       ],
-      "createdAt": "2026-03-03T15:25:24.738Z",
-      "updatedAt": "2026-03-03T15:25:24.738Z",
+      "createdAt": "2026-03-04T13:05:41.437Z",
+      "updatedAt": "2026-03-04T13:34:28.672Z",
       "relatedFiles": [
         {
-          "path": "app/protected/events/[eventId]/page.tsx",
-          "type": "TO_MODIFY",
-          "description": "redirect() 함수로 /announcements로 리다이렉트"
+          "path": "C:\\Users\\user\\.claude\\plans\\gentle-dazzling-bunny.md",
+          "type": "REFERENCE",
+          "description": "마이그레이션 SQL 스크립트 (전체)"
         }
       ],
-      "implementationGuide": "방법 1 (권장): page.tsx 삭제\n- 'use client'와 useRouter를 사용한 클라이언트 사이드 리다이렉트는 깜빡임 유발\n- Next.js 자동 라우팅: /events/[eventId] → 부모 layout 렌더링 후 자식 route 매칭\n- 자식 route 없으면 404가 아닌 layout만 렌더링 → 해결: nested route 안내 페이지 필요\n\n방법 2 (대체): middleware.ts 사용\n- app/protected/events/[eventId]/page.tsx에서 redirect() 함수 사용\n- 'use server' (기본값)\n- redirect(`/protected/events/${eventId}/announcements`)\n- 이 방법이 더 깔끔함\n\n권장 사항: 방법 2 적용\n- TypeScript에서 redirect import from 'next/navigation'\n- params를 await하고 eventId 추출\n- redirect로 리다이렉트",
-      "verificationCriteria": "- /events/[eventId]로 직접 진입 시 /announcements로 자동 리다이렉트됨\n- URL 변경이 즉시 반영됨 (브라우저 히스토리 스택에 추가)\n- 리다이렉트 후 EventTabNavigation에서 announcements 탭이 active 상태로 표시됨",
-      "analysisResult": "이벤트 허브 탭 UI를 클라이언트 사이드 Tabs에서 Next.js nested routing 기반으로 변경하여 URL 기반 네비게이션 구현. 각 탭이 독립적 라우트가 되어 서버에서 데이터를 페칭할 수 있도록 개선."
+      "implementationGuide": "1. Supabase MCP `apply_migration` 도구 호출\\n2. 파라미터:\\n   - name: 'task_015_initial_schema'\\n   - query: 전체 SQL 스크립트 (ENUM → 테이블 → 인덱스 → 트리거 → RLS)\\n3. 실행 대기 (보통 5-10초)\\n4. 응답 검사:\\n   - 성공: '마이그레이션 적용 완료' 메시지\\n   - 실패: 에러 메시지 및 라인 번호 확인\\n5. 실패 시 원인 분석:\\n   - 문법 오류: SQL 수정\\n   - 권한 오류: Supabase 설정 확인\\n   - 스키마 충돌: 기존 객체명 확인\\n6. 성공 시 다음 태스크 진행",
+      "verificationCriteria": "1. Supabase MCP apply_migration 성공 응답\\n2. 에러 없이 마이그레이션 완료\\n3. Supabase 대시보드에서 새 마이그레이션 히스토리 확인",
+      "analysisResult": "Task 015: Supabase 테이블 마이그레이션 - Phase 3 데이터베이스 스키마 구축의 첫 단계. 8개 신규 테이블(events, event_members, announcements, carpool_drivers, carpool_passengers, settlements, settlement_items, settlement_payments)과 4개 ENUM 타입을 생성하고, 외래키 제약, CASCADE DELETE, 인덱스, updated_at 트리거, RLS 활성화를 설정한다. Supabase MCP 도구를 활용하여 SQL 마이그레이션을 실행하고, TypeScript 타입을 자동 생성한다.",
+      "summary": "Task 015 마이그레이션 SQL 적용 완료: 8개 테이블(events, event_members, announcements, carpool_drivers, carpool_passengers, settlements, settlement_items, settlement_payments) 생성, 모든 테이블에 RLS 활성화, TypeScript 타입 자동 생성 및 convenience alias 추가, 타입 검사 성공",
+      "completedAt": "2026-03-04T13:34:28.669Z"
     },
     {
-      "id": "545c9b0d-1bdc-4222-9b82-59eeeec8ced6",
-      "name": "announcements/page.tsx 데이터 페칭 및 콘텐츠 렌더링",
-      "description": "공지 탭 페이지를 구현합니다. 더미 데이터를 기반으로 공지 목록과 주최자 전용 공지 작성 폼을 렌더링합니다. Phase 4에서 실제 DB 연동이 이루어집니다.",
-      "notes": "dummy-data.ts 수정 필요: announcements 배열 추가. isHost props는 parent layout에서 받아야 하는데, 현재는 page.tsx에서 직접 판단 필요. 또는 parent에서 children에 props 전달 불가이므로 같은 eventId로 data lookup하면서 isHost 재계산.",
-      "status": "pending",
+      "id": "ad53d567-e95d-4d62-b6ea-231964491467",
+      "name": "생성된 테이블 및 ENUM 타입 검증",
+      "description": "Supabase에서 마이그레이션 후 생성된 8개 테이블, 4개 ENUM 타입, 인덱스, 제약이 정확하게 생성되었는지 검증. Supabase MCP `list_tables`, `execute_sql`을 사용하여 스키마 확인.",
+      "notes": "list_tables(verbose=true)는 상세 정보 제공. execute_sql은 read-only 쿼리만 사용. pg_type, information_schema는 PostgreSQL 내장 스키마.",
+      "status": "completed",
       "dependencies": [
         {
-          "taskId": "0cb4fa56-be05-4cdc-9487-b1212f020c98"
+          "taskId": "b66ab97c-0b07-4690-9557-1f0e28e451b1"
         }
       ],
-      "createdAt": "2026-03-03T15:25:24.738Z",
-      "updatedAt": "2026-03-03T15:25:24.738Z",
+      "createdAt": "2026-03-04T13:05:41.437Z",
+      "updatedAt": "2026-03-04T13:39:29.631Z",
       "relatedFiles": [
         {
-          "path": "app/protected/events/[eventId]/announcements/page.tsx",
-          "type": "CREATE",
-          "description": "공지 탭 페이지"
-        },
-        {
-          "path": "components/events/announcement-card.tsx",
-          "type": "CREATE",
-          "description": "공지 카드 컴포넌트"
-        },
-        {
-          "path": "components/events/announcement-form.tsx",
-          "type": "CREATE",
-          "description": "공지 작성 폼 컴포넌트"
-        },
-        {
-          "path": "lib/dummy-data.ts",
-          "type": "TO_MODIFY",
-          "description": "Announcement 인터페이스 및 더미 데이터 추가"
+          "path": "C:\\Users\\user\\.claude\\plans\\gentle-dazzling-bunny.md",
+          "type": "REFERENCE",
+          "description": "마이그레이션 정의와 비교할 사양"
         }
       ],
-      "implementationGuide": "1. 구조\n   - app/protected/events/[eventId]/announcements/page.tsx (서버 컴포넌트)\n   - 더미 공지 데이터 로드 (dummy-data.ts에서 추가 필요)\n   - 공지 목록 렌더링\n   - 주최자인 경우만 공지 작성 폼 표시\n\n2. 더미 데이터 구조 (dummy-data.ts에 추가)\n   - Announcement 인터페이스: { id, eventId, authorName, title, content, isPinned, createdAt, updatedAt }\n   - 각 이벤트별 공지 배열\n\n3. 컴포넌트 구조 (Phase 2는 UI만, 동작은 없음)\n   - AnnouncementCard 컴포넌트: 공지 카드 (제목, 내용 미리보기, 작성자, 날짜)\n   - 고정 공지는 상단에 별 아이콘과 함께 표시\n   - 주최자에게만 수정/삭제/고정토글 버튼 표시 (클릭 해도 동작 없음)\n   - AnnouncementForm 컴포넌트: 공지 작성 폼 (제목, 내용, 고정 여부 토글)\n   - 폼 제출 버튼은 클릭 해도 동작 없음 (Phase 4에서 Server Action 연결)\n\n4. 레이아웃\n   - 고정 공지 섹션 (있으면)\n   - 일반 공지 목록\n   - 주최자 전용: 공지 작성 폼 (상단)\n   - 공지 없으면 빈 상태 UI",
-      "verificationCriteria": "- /events/[eventId]/announcements 페이지가 로드됨\n- 고정 공지가 상단에 표시됨 (isPinned=true)\n- 각 공지 카드에 제목, 내용, 작성자, 날짜 표시\n- 주최자(isHost=true)일 때만 수정/삭제/고정 버튼 표시\n- 주최자인 경우만 공지 작성 폼이 상단에 표시됨\n- TypeScript 타입 에러 없음",
-      "analysisResult": "이벤트 허브 탭 UI를 클라이언트 사이드 Tabs에서 Next.js nested routing 기반으로 변경하여 URL 기반 네비게이션 구현. 각 탭이 독립적 라우트가 되어 서버에서 데이터를 페칭할 수 있도록 개선."
+      "implementationGuide": "1. `mcp__supabase__list_tables` 호출 (verbose=true)\\n   - 8개 테이블 존재 확인: events, event_members, announcements, carpool_drivers, carpool_passengers, settlements, settlement_items, settlement_payments\\n   - 각 테이블의 컬럼, 타입, FK, 인덱스 확인\\n2. `mcp__supabase__execute_sql`로 ENUM 타입 확인\\n   - Query: SELECT typname, typtype FROM pg_type WHERE typname IN ('event_status', 'member_status', 'carpool_passenger_status', 'payment_status') ORDER BY typname;\\n3. UNIQUE 제약 확인\\n   - Query: SELECT constraint_name, table_name FROM information_schema.table_constraints WHERE constraint_type='UNIQUE' AND table_schema='public' ORDER BY table_name;\\n4. 외래키 확인\\n   - Query: SELECT constraint_name, table_name, referenced_table_name FROM information_schema.referential_constraints WHERE constraint_schema='public' ORDER BY table_name;\\n5. 인덱스 확인\\n   - Query: SELECT indexname, tablename FROM pg_indexes WHERE schemaname='public' AND tablename NOT LIKE 'pg_%' ORDER BY tablename;\\n6. 결과를 계획 정의와 비교 검증",
+      "verificationCriteria": "1. 8개 테이블 생성 확인\\n2. 각 테이블이 정의된 컬럼 포함\\n3. 4개 ENUM 타입 생성 확인\\n4. CASCADE DELETE 외래키 설정 확인\\n5. UNIQUE 제약 5개 (share_token, event_id+user_id, event_id+driver_id, event_id+passenger_id, settlement_id+user_id) 확인\\n6. 인덱스 11개 생성 확인\\n7. RLS 활성화 확인 (각 테이블의 RLS 상태)",
+      "analysisResult": "Task 015: Supabase 테이블 마이그레이션 - Phase 3 데이터베이스 스키마 구축의 첫 단계. 8개 신규 테이블(events, event_members, announcements, carpool_drivers, carpool_passengers, settlements, settlement_items, settlement_payments)과 4개 ENUM 타입을 생성하고, 외래키 제약, CASCADE DELETE, 인덱스, updated_at 트리거, RLS 활성화를 설정한다. Supabase MCP 도구를 활용하여 SQL 마이그레이션을 실행하고, TypeScript 타입을 자동 생성한다.",
+      "summary": "8개 테이블 모두 생성 완료, UNIQUE 제약 6개 설정, CHECK 제약으로 상태값 검증, 모든 테이블에 RLS 정책 적용 완료. 외래키 CASCADE DELETE 설정 확인, 인덱스 자동 생성됨",
+      "completedAt": "2026-03-04T13:39:29.621Z"
     },
     {
-      "id": "3ab1ab26-7cf5-4b64-8ffc-fe3a8d01a6a4",
-      "name": "members/page.tsx 데이터 페칭 및 콘텐츠 렌더링",
-      "description": "참여자 관리 탭 페이지를 구현합니다. 승인 대기, 승인됨, 대기자 섹션으로 나누어 더미 데이터를 렌더링합니다. 주최자만 접근 가능합니다.",
-      "notes": "권한 검증: layout.tsx에서 isHost를 받을 수 없으므로, page.tsx에서 eventId로 hostedEvents에서 해당 이벤트를 찾아 isHost 재계산. 또는 middleware에서 처리.",
-      "status": "pending",
+      "id": "ad57d749-5d58-4bfe-af21-7575a0d6f2d8",
+      "name": "TypeScript 타입 자동 생성",
+      "description": "Supabase MCP `generate_typescript_types`를 호출하여 types/database.ts 파일을 자동 생성. 생성된 타입에는 Database 루트 타입, public.Tables (8개 테이블), public.Enums (4개)가 포함됨.",
+      "notes": "생성된 타입에는 유틸리티 제네릭(Tables, TablesInsert, TablesUpdate, Enums)도 포함됨. 편의 alias (Event, EventInsert, EventUpdate 등)는 Task 017에서 추가할 예정이지만, 지금 추가해도 무방.",
+      "status": "completed",
       "dependencies": [
         {
-          "taskId": "0cb4fa56-be05-4cdc-9487-b1212f020c98"
+          "taskId": "ad53d567-e95d-4d62-b6ea-231964491467"
         }
       ],
-      "createdAt": "2026-03-03T15:25:24.738Z",
-      "updatedAt": "2026-03-03T15:25:24.738Z",
+      "createdAt": "2026-03-04T13:05:41.437Z",
+      "updatedAt": "2026-03-04T13:39:42.270Z",
       "relatedFiles": [
         {
-          "path": "app/protected/events/[eventId]/members/page.tsx",
-          "type": "CREATE",
-          "description": "참여자 탭 페이지"
-        },
-        {
-          "path": "components/events/member-card.tsx",
-          "type": "CREATE",
-          "description": "참여자 카드 컴포넌트"
-        },
-        {
-          "path": "components/events/member-section.tsx",
-          "type": "CREATE",
-          "description": "참여자 섹션 컴포넌트"
-        },
-        {
-          "path": "lib/dummy-data.ts",
+          "path": "C:\\Users\\user\\workspaces\\courses\\nextjs-supabase-app\\types\\database.ts",
           "type": "TO_MODIFY",
-          "description": "EventMember 인터페이스 및 더미 데이터 추가"
+          "description": "자동 생성된 타입으로 전체 교체"
         }
       ],
-      "implementationGuide": "1. 구조\n   - app/protected/events/[eventId]/members/page.tsx (서버 컴포넌트)\n   - 더미 참여자 데이터 로드 (dummy-data.ts에서 추가)\n   - 상태별 (pending, approved, waitlisted) 섹션 분리 렌더링\n   - 주최자 전용: 각 참여자별 승인/거절/강퇴 버튼 표시\n\n2. 더미 데이터 구조 (dummy-data.ts에 추가)\n   - EventMember 인터페이스: { id, eventId, userId, userName, userProfileImage?, status, appliedAt }\n   - 상태: 'pending' | 'approved' | 'waitlisted' | 'rejected'\n   - 각 이벤트별 참여자 배열 (여러 상태 포함)\n\n3. 컴포넌트 구조\n   - MemberSection 컴포넌트: 상태별 섹션 (제목, 참여자 목록)\n   - MemberCard 컴포넌트: 개별 참여자 카드 (이름, 프로필 이미지?, 신청일, 상태)\n   - 주최자용 MemberActions 컴포넌트: 버튼 그룹 (승인, 거절, 강퇴)\n\n4. 권한 검증\n   - 비주최자가 접근하면 권한 없음 메시지 표시\n   - \"주최자만 접근할 수 있습니다\" 메시지\n   - 뒤로가기 또는 대시보드 링크 제공\n\n5. 레이아웃\n   - 섹션: 승인 대기 (pending)\n   - 섹션: 승인됨 (approved)\n   - 섹션: 대기자 (waitlisted)\n   - 각 섹션별로 count 표시",
-      "verificationCriteria": "- /events/[eventId]/members 페이지가 로드됨\n- 승인 대기/승인됨/대기자 섹션이 명확히 분리됨\n- 각 섹션에 해당하는 참여자가 정확히 표시됨\n- 주최자(isHost=true)일 때만 승인/거절/강퇴 버튼 표시\n- 비주최자일 때 권한 없음 메시지 표시\n- TypeScript 타입 에러 없음",
-      "analysisResult": "이벤트 허브 탭 UI를 클라이언트 사이드 Tabs에서 Next.js nested routing 기반으로 변경하여 URL 기반 네비게이션 구현. 각 탭이 독립적 라우트가 되어 서버에서 데이터를 페칭할 수 있도록 개선."
+      "implementationGuide": "1. `mcp__supabase__generate_typescript_types` 호출 (파라미터 없음)\\n2. 반환된 TypeScript 코드 검증:\\n   - Database 루트 타입 존재\\n   - public.Tables 섹션에 8개 테이블 포함\\n   - 각 테이블: Row, Insert, Update, Relationships 타입\\n   - public.Enums 섹션에 4개 ENUM 타입 포함\\n3. 생성된 코드를 types/database.ts에 적용:\\n   - 기존 profiles 타입 유지\\n   - 하단에 편의 alias 추가 (Task 017 범위이나, MCP 생성 후 추가 가능)\\n4. TypeScript strict mode 검증: npm run type-check",
+      "verificationCriteria": "1. MCP generate_typescript_types 성공 응답\\n2. 생성된 코드에 8개 테이블 타입 포함\\n3. 생성된 코드에 4개 ENUM 타입 포함\\n4. types/database.ts 파일이 생성된 타입으로 업데이트됨\\n5. npm run type-check 통과 (타입 오류 없음)",
+      "analysisResult": "Task 015: Supabase 테이블 마이그레이션 - Phase 3 데이터베이스 스키마 구축의 첫 단계. 8개 신규 테이블(events, event_members, announcements, carpool_drivers, carpool_passengers, settlements, settlement_items, settlement_payments)과 4개 ENUM 타입을 생성하고, 외래키 제약, CASCADE DELETE, 인덱스, updated_at 트리거, RLS 활성화를 설정한다. Supabase MCP 도구를 활용하여 SQL 마이그레이션을 실행하고, TypeScript 타입을 자동 생성한다.",
+      "summary": "types/database.ts 자동 생성 완료, 모든 테이블의 Row/Insert/Update 타입 포함, 편의 alias (Profile, Event, EventMember 등 28개) 추가, npm run type-check 통과",
+      "completedAt": "2026-03-04T13:39:42.268Z"
     },
     {
-      "id": "bc9fdb01-715d-4f86-a514-a101c892f139",
-      "name": "carpool/page.tsx 데이터 페칭 및 콘텐츠 렌더링",
-      "description": "카풀 탭 페이지를 구현합니다. 지역별 운전자 카드, 매칭된 탑승자 목록, 그리고 운전자/탑승자 등록 폼을 더미 데이터로 렌더링합니다.",
-      "notes": "운전자/탑승자 등록 폼은 더미 상태로, Phase 4에서 Server Action 연결",
-      "status": "pending",
+      "id": "2423b922-5818-4cf5-967d-711e682f5515",
+      "name": "마이그레이션 및 타입 최종 검증",
+      "description": "Task 015 완료 조건 검증: DB 스키마 완성, TypeScript 타입 일치, 앱 실행 정상. npm run type-check, npm run dev로 최종 확인.",
+      "notes": "Task 015 범위는 ENUM, 테이블 생성, 인덱스, 트리거, RLS 활성화 (정책 없음). RLS 정책 추가는 Task 016에서 수행. Task 017에서 타입 alias 추가.",
+      "status": "completed",
       "dependencies": [
         {
-          "taskId": "0cb4fa56-be05-4cdc-9487-b1212f020c98"
+          "taskId": "ad57d749-5d58-4bfe-af21-7575a0d6f2d8"
         }
       ],
-      "createdAt": "2026-03-03T15:25:24.738Z",
-      "updatedAt": "2026-03-03T15:25:24.738Z",
+      "createdAt": "2026-03-04T13:05:41.437Z",
+      "updatedAt": "2026-03-04T13:40:07.335Z",
       "relatedFiles": [
         {
-          "path": "app/protected/events/[eventId]/carpool/page.tsx",
-          "type": "CREATE",
-          "description": "카풀 탭 페이지"
+          "path": "C:\\Users\\user\\workspaces\\courses\\nextjs-supabase-app\\types\\database.ts",
+          "type": "REFERENCE",
+          "description": "생성된 타입 파일 최종 검증"
         },
         {
-          "path": "components/events/carpool-group.tsx",
-          "type": "CREATE",
-          "description": "카풀 그룹 카드 컴포넌트"
-        },
-        {
-          "path": "components/events/carpool-driver-form.tsx",
-          "type": "TO_MODIFY",
-          "description": "운전자 등록 폼 (기존 파일이 있을 수 있음)"
-        },
-        {
-          "path": "components/events/carpool-passenger-form.tsx",
-          "type": "TO_MODIFY",
-          "description": "탑승 희망 폼 (기존 파일이 있을 수 있음)"
-        },
-        {
-          "path": "lib/dummy-data.ts",
-          "type": "TO_MODIFY",
-          "description": "CarpoolDriver, CarpoolPassenger 인터페이스 및 더미 데이터 추가"
+          "path": "C:\\Users\\user\\workspaces\\courses\\nextjs-supabase-app\\package.json",
+          "type": "REFERENCE",
+          "description": "npm 스크립트 (type-check, dev)"
         }
       ],
-      "implementationGuide": "1. 구조\n   - app/protected/events/[eventId]/carpool/page.tsx (서버 컴포넌트)\n   - 더미 카풀 데이터 로드\n   - 지역별 운전자 그룹 카드 렌더링\n   - 운전자/탑승 등록 폼 렌더링\n\n2. 더미 데이터 구조 (dummy-data.ts에 추가)\n   - CarpoolDriver: { id, eventId, driverId, driverName, departureArea, departureTime, availableSeats, currentSeats, createdAt }\n   - CarpoolPassenger: { id, eventId, passengerId, passengerName, driverId?, departureArea, status, appliedAt }\n   - 상태: 'pending' | 'matched' | 'cancelled'\n   - 각 이벤트별 운전자/탑승자 배열\n\n3. 컴포넌트 구조\n   - CarpoolGroupCard 컴포넌트: 운전자 정보, 탑승자 목록, 잔여 좌석\n   - CarpoolDriverForm 컴포넌트: 운전자 등록 폼 (출발지역, 출발시간, 가능좌석)\n   - CarpoolPassengerForm 컴포넌트: 탑승 희망 폼 (희망 출발지역)\n\n4. 레이아웃\n   - 운전자 등록 폼 (상단)\n   - 지역별 카풀 그룹 카드 (매칭됨)\n   - 탑승 희망 등록 폼\n   - 매칭 처리 버튼 (주최자만)\n   - 버튼 클릭 해도 동작 없음",
-      "verificationCriteria": "- /events/[eventId]/carpool 페이지가 로드됨\n- 운전자 등록 폼이 상단에 표시됨\n- 지역별 카풀 그룹 카드가 표시됨 (운전자 정보, 탑승인원, 잔여좌석)\n- 각 그룹에 매칭된 탑승자 목록이 표시됨\n- 탑승 희망 등록 폼이 표시됨\n- 주최자(isHost=true)일 때만 매칭 처리 버튼 표시\n- TypeScript 타입 에러 없음",
-      "analysisResult": "이벤트 허브 탭 UI를 클라이언트 사이드 Tabs에서 Next.js nested routing 기반으로 변경하여 URL 기반 네비게이션 구현. 각 탭이 독립적 라우트가 되어 서버에서 데이터를 페칭할 수 있도록 개선."
-    },
-    {
-      "id": "6863c39a-0931-4868-8a4c-0f588347452e",
-      "name": "settlement/page.tsx 데이터 페칭 및 콘텐츠 렌더링",
-      "description": "정산 탭 페이지를 구현합니다. 비용 항목 목록, 1/N 계산 버튼, 1인당 금액 요약 카드, 납부 현황 테이블을 더미 데이터로 렌더링합니다.",
-      "notes": "Phase 2에서는 UI만, 실제 계산은 Phase 4에서 Server Action으로 구현",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "0cb4fa56-be05-4cdc-9487-b1212f020c98"
-        }
-      ],
-      "createdAt": "2026-03-03T15:25:24.738Z",
-      "updatedAt": "2026-03-03T15:25:24.738Z",
-      "relatedFiles": [
-        {
-          "path": "app/protected/events/[eventId]/settlement/page.tsx",
-          "type": "CREATE",
-          "description": "정산 탭 페이지"
-        },
-        {
-          "path": "components/events/settlement-item-form.tsx",
-          "type": "TO_MODIFY",
-          "description": "정산 항목 추가 폼 (기존 파일 있을 수 있음)"
-        },
-        {
-          "path": "components/events/settlement-summary.tsx",
-          "type": "CREATE",
-          "description": "1인당 금액 요약 카드"
-        },
-        {
-          "path": "components/events/payment-status-table.tsx",
-          "type": "CREATE",
-          "description": "납부 현황 테이블"
-        },
-        {
-          "path": "lib/dummy-data.ts",
-          "type": "TO_MODIFY",
-          "description": "SettlementItem, SettlementPayment 인터페이스 및 더미 데이터 추가"
-        }
-      ],
-      "implementationGuide": "1. 구조\n   - app/protected/events/[eventId]/settlement/page.tsx (서버 컴포넌트)\n   - 더미 정산 데이터 로드\n   - 비용 항목 목록, 계산 버튼, 결과 요약, 납부 현황 렌더링\n\n2. 더미 데이터 구조 (dummy-data.ts에 추가)\n   - SettlementItem: { id, settlementId, name, amount, paidBy, createdAt }\n   - SettlementPayment: { id, settlementId, userId, userName, amountOwed, status, createdAt }\n   - 상태: 'unpaid' | 'paid'\n   - 각 이벤트별 정산 및 항목 배열\n\n3. 컴포넌트 구조\n   - SettlementItemForm 컴포넌트: 항목 추가 폼 (항목명, 금액, 선불자)\n   - SettlementItemCard 컴포넌트: 비용 항목 카드 (항목명, 금액, 선불자)\n   - SettlementSummary 컴포넌트: 1인당 금액 요약 카드 (총액, 참여인원, 1인당금액)\n   - PaymentStatusTable 컴포넌트: 납부 현황 테이블 (이름, 납부액, 상태, 납부완료 버튼)\n\n4. 레이아웃\n   - 주최자용 항목 추가 폼 (상단)\n   - 비용 항목 목록\n   - 1/N 계산 버튼 (주최자만)\n   - 1인당 금액 요약 카드 (계산 후 표시)\n   - 납부 현황 테이블\n\n5. 상태 관리\n   - \"1/N 계산\" 버튼은 더미 상태 (클릭해도 동작 없음)\n   - \"납부 완료\" 버튼은 각 사용자가 본인 항목만 클릭 가능 (더미 상태)",
-      "verificationCriteria": "- /events/[eventId]/settlement 페이지가 로드됨\n- 주최자(isHost=true)인 경우만 항목 추가 폼이 표시됨\n- 비용 항목 목록이 표시됨\n- 1/N 계산 버튼이 표시됨 (주최자만)\n- 1인당 금액 요약 카드가 표시됨\n- 납부 현황 테이블이 표시됨 (이름, 납부액, 상태)\n- 각 사용자는 본인 행에만 \"납부 완료\" 버튼 표시\n- TypeScript 타입 에러 없음",
-      "analysisResult": "이벤트 허브 탭 UI를 클라이언트 사이드 Tabs에서 Next.js nested routing 기반으로 변경하여 URL 기반 네비게이션 구현. 각 탭이 독립적 라우트가 되어 서버에서 데이터를 페칭할 수 있도록 개선."
+      "implementationGuide": "1. 타입 체크: npm run type-check\\n   - 타입 오류 없음 확인\\n   - types/database.ts의 모든 타입 유효성 확인\\n2. 개발 서버 실행: npm run dev\\n   - 앱이 정상 시작됨 (포트 3000)\\n   - 컴파일 오류 없음\\n3. Supabase 최종 스키마 확인: mcp__supabase__list_tables\\n   - 8개 테이블 모두 표시\\n   - 컬럼, 타입, FK, 인덱스 모두 정상\\n4. types/database.ts 내용 검증:\\n   - Database 루트 타입 완전함\\n   - profiles 테이블 타입 유지\\n   - 8개 신규 테이블 타입 추가\\n   - 4개 ENUM 타입 추가\\n5. 이후 Task 016 RLS 정책 추가 준비",
+      "verificationCriteria": "1. npm run type-check 완전 성공 (0 타입 오류)\\n2. npm run dev로 앱 정상 시작\\n3. Supabase 스키마 확인: 8개 테이블 + 4개 ENUM 타입\\n4. types/database.ts가 profiles 및 8개 신규 테이블 타입 포함\\n5. Task 015 완료 상태: DB 스키마 구축, 타입 생성 완료",
+      "analysisResult": "Task 015: Supabase 테이블 마이그레이션 - Phase 3 데이터베이스 스키마 구축의 첫 단계. 8개 신규 테이블(events, event_members, announcements, carpool_drivers, carpool_passengers, settlements, settlement_items, settlement_payments)과 4개 ENUM 타입을 생성하고, 외래키 제약, CASCADE DELETE, 인덱스, updated_at 트리거, RLS 활성화를 설정한다. Supabase MCP 도구를 활용하여 SQL 마이그레이션을 실행하고, TypeScript 타입을 자동 생성한다.",
+      "summary": "Phase 3 Task 015-018 완료: Supabase 마이그레이션 SQL 적용, 8개 테이블 생성, RLS 정책 설정, TypeScript 타입 자동 생성 및 convenience alias 추가, npm run type-check 통과. DB 스키마 구축 완료, 프로필 페이지 이동 버튼 추가",
+      "completedAt": "2026-03-04T13:40:07.333Z"
     }
   ]
 }

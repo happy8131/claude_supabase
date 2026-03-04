@@ -1,0 +1,31 @@
+{
+  "tasks": [
+    {
+      "id": "0cb4fa56-be05-4cdc-9487-b1212f020c98",
+      "name": "EventTabNavigation 컴포넌트 생성 및 layout.tsx 수정",
+      "description": "탭 네비게이션을 공유 컴포넌트로 분리하고, layout.tsx에 통합하여 모든 nested route에서 동일한 탭 UI를 표시합니다. usePathname()으로 현재 활성 탭을 식별하고, isHost prop으로 주최자 전용 탭을 조건부 렌더링합니다.",
+      "notes": "EventHeader와 EventTabNavigation을 분리해서 layout에서 순차적으로 렌더링. Tailwind CSS의 동적 클래스 주의 (pre-computed 필요시 className 배열 활용)",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-03-03T15:25:24.738Z",
+      "updatedAt": "2026-03-03T15:26:06.319Z",
+      "relatedFiles": [
+        {
+          "path": "components/events/event-tab-navigation.tsx",
+          "type": "CREATE",
+          "description": "탭 네비게이션 컴포넌트"
+        },
+        {
+          "path": "app/protected/events/[eventId]/layout.tsx",
+          "type": "TO_MODIFY",
+          "description": "EventTabNavigation 추가"
+        }
+      ],
+      "implementationGuide": "1. components/events/event-tab-navigation.tsx 생성 (클라이언트 컴포넌트)\n   - usePathname() 사용해서 pathname 분석\n   - /announcements, /members, /carpool, /settlement, /settings 경로로 매핑\n   - Link 컴포넌트로 라우팅 (동일 이벤트 ID 유지)\n   - isHost prop으로 members, settings 탭 조건부 렌더링\n   - className 활용해서 active tab 하이라이트 (border-b-2 등)\n2. app/protected/events/[eventId]/layout.tsx 수정\n   - 'use client' 제거 (이미 EventHeader 있음, 필요시만 추가)\n   - EventTabNavigation 임포트 후 EventHeader 아래에 렌더링\n   - isHost를 props로 전달 (현재 layout에서 이미 계산 중)\n   - {children}으로 nested route 콘텐츠 렌더링\n3. 주의사항\n   - URL 기반이므로 searchParams 대신 pathname 사용\n   - 초기 진입 시 /events/[eventId]는 /announcements로 리다이렉트 필요",
+      "verificationCriteria": "- EventTabNavigation 컴포넌트가 usePathname()으로 현재 탭 정확히 식별\n- active 탭이 시각적으로 구분되어야 함 (border, 색상 등)\n- 주최자(isHost=true)일 때만 members, settings 탭 표시\n- 각 탭 클릭 시 URL이 정확히 변경되고, 새로고침 후에도 동일한 탭이 활성화됨\n- TypeScript 타입 에러 없음",
+      "analysisResult": "이벤트 허브 탭 UI를 클라이언트 사이드 Tabs에서 Next.js nested routing 기반으로 변경하여 URL 기반 네비게이션 구현. 각 탭이 독립적 라우트가 되어 서버에서 데이터를 페칭할 수 있도록 개선.",
+      "summary": "EventTabNavigation 컴포넌트를 usePathname() 기반으로 생성하고 layout.tsx에 통합 완료. 각 탭의 active 상태를 정확히 식별하며, 주최자 전용 탭(members, settings)은 isHost prop으로 조건부 렌더링. Link 컴포넌트를 사용한 URL 기반 라우팅 구현으로 모든 nested route 접근 시 자동으로 탭 네비게이션 표시됨.",
+      "completedAt": "2026-03-03T15:26:06.316Z"
+    }
+  ]
+}

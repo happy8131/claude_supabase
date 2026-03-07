@@ -1,152 +1,77 @@
+import { Cog, DollarSign, FileText, Plus } from "lucide-react"
 import Link from "next/link"
 
-import { EventCard } from "@/components/events/event-card"
+import { DashboardStats } from "@/components/dashboard/dashboard-stats"
+import { EventManagementTable } from "@/components/dashboard/event-management-table"
 import { Button } from "@/components/ui/button"
-import { createClient } from "@/lib/supabase/server"
+import { dummyEvents } from "@/lib/dummy-data"
 
-export default async function ProtectedPage() {
-  const supabase = await createClient()
+export default function ProtectedPage() {
+  const hostedEvents = dummyEvents.hostedEvents
 
-  // 현재 사용자 조회
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user?.id) {
-    return <div>로그인이 필요합니다.</div>
-  }
-
-  // 내가 만든 이벤트 조회 (host_id = current user)
-  const { data: hostedEvents = [], error: hostedError } = await supabase
-    .from("events")
-    .select(
-      `
-      id,
-      title,
-      event_date,
-      location,
-      max_members,
-      status,
-      cover_image_url,
-      event_members(count)
-    `,
-    )
-    .eq("host_id", user.id)
-    .order("event_date", { ascending: true })
-
-  // 내가 참여한 이벤트 조회 (status = approved)
-  const { data: participatedMembers = [] } = await supabase
-    .from("event_members")
-    .select(
-      `
-      event_id,
-      events(
-        id,
-        title,
-        event_date,
-        location,
-        max_members,
-        status,
-        cover_image_url,
-        event_members(count)
-      )
-    `,
-    )
-    .eq("user_id", user.id)
-    .eq("status", "approved")
-    .order("events.event_date", { ascending: true })
-
-  // 데이터 변환
-  const hostedEventsList = (hostedEvents || []).map((event: any) => ({
-    id: event.id,
-    title: event.title,
-    date: event.event_date,
-    location: event.location,
-    participantCount: event.event_members?.[0]?.count || 0,
-    maxMembers: event.max_members,
-    status: event.status,
-    coverImageUrl: event.cover_image_url,
-  }))
-
-  const participatedEventsList = (participatedMembers || [])
-    .map((member: any) => member.events)
-    .filter(Boolean)
-    .map((event: any) => ({
-      id: event.id,
-      title: event.title,
-      date: event.event_date,
-      location: event.location,
-      participantCount: event.event_members?.[0]?.count || 0,
-      maxMembers: event.max_members,
-      status: event.status,
-      coverImageUrl: event.cover_image_url,
-    }))
+  // 통계 계산
+  const hostedEventsCount = hostedEvents.length
+  const participantsCount = hostedEvents.reduce(
+    (sum, event) => sum + (event.participantCount || 1),
+    0,
+  )
+  const ongoingCount = hostedEvents.filter(
+    (e) => e.status === "scheduled",
+  ).length
+  const completedCount = hostedEvents.filter(
+    (e) => e.status === "completed",
+  ).length
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-8">
-      {/* 헤더 - 새 모임 만들기 버튼 */}
-      <div className="flex justify-end">
-        <Link href="/protected/events/new">
-          <Button>새 모임 만들기</Button>
-        </Link>
+    <div className="space-y-6">
+      {/* 제목 섹션 */}
+      <div>
+        <h1 className="text-3xl font-bold">대시보드</h1>
+        <p className="text-muted-foreground mt-1">
+          주최한 이벤트를 한눈에 관리하세요.
+        </p>
       </div>
 
-      {/* 내가 만든 이벤트 섹션 */}
-      <section>
-        <h2 className="text-2xl font-bold mb-4">내가 만든 이벤트</h2>
-        {hostedEventsList.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <p>아직 만든 이벤트가 없습니다.</p>
-            <Link href="/protected/events/new">
-              <Button variant="outline" className="mt-4">
-                첫 모임 만들기
-              </Button>
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {hostedEventsList.map((event) => (
-              <EventCard
-                key={event.id}
-                id={event.id}
-                title={event.title}
-                date={event.date}
-                location={event.location}
-                participantCount={event.participantCount}
-                maxMembers={event.maxMembers}
-                status={event.status}
-                coverImageUrl={event.coverImageUrl}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+      {/* 통계 섹션 */}
+      <DashboardStats
+        hostedEventsCount={hostedEventsCount}
+        participantsCount={participantsCount}
+        ongoingCount={ongoingCount}
+        completedCount={completedCount}
+      />
 
-      {/* 내가 참여한 이벤트 섹션 */}
-      <section>
-        <h2 className="text-2xl font-bold mb-4">내가 참여한 이벤트</h2>
-        {participatedEventsList.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <p>아직 참여한 이벤트가 없습니다.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {participatedEventsList.map((event) => (
-              <EventCard
-                key={event.id}
-                id={event.id}
-                title={event.title}
-                date={event.date}
-                location={event.location}
-                participantCount={event.participantCount}
-                maxMembers={event.maxMembers}
-                status={event.status}
-                coverImageUrl={event.coverImageUrl}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+      {/* 빠른 작업 섹션 */}
+      <div className="bg-muted/50 rounded-lg p-6 space-y-4">
+        <h2 className="text-lg font-semibold">빠른 작업</h2>
+        <div className="flex flex-wrap gap-3">
+          <Link href="/protected/events/new">
+            <Button className="gap-2">
+              <Plus className="w-4 h-4" />새 모임 만들기
+            </Button>
+          </Link>
+          <Button variant="outline" disabled className="gap-2">
+            <FileText className="w-4 h-4" />
+            공지사항 작성
+          </Button>
+          <Button variant="outline" disabled className="gap-2">
+            <DollarSign className="w-4 h-4" />
+            정산 관리
+          </Button>
+          <Button variant="outline" disabled className="gap-2">
+            <Cog className="w-4 h-4" />
+            설정
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground mt-2">
+          💡 비활성화된 기능은 Phase 4에서 추가될 예정입니다.
+        </p>
+      </div>
+
+      {/* 이벤트 관리 섹션 */}
+      <div>
+        <h2 className="text-lg font-semibold mb-4">이벤트 관리</h2>
+        <EventManagementTable events={hostedEvents} />
+      </div>
     </div>
   )
 }

@@ -42,15 +42,28 @@ export function SignUpForm({
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/protected`,
+          emailRedirectTo: `${window.location.origin}/auth/confirm?next=/protected`,
         },
       })
       if (error) throw error
-      router.push("/auth/sign-up-success")
+
+      // 이메일 확인 대기 상태 확인
+      if (data.user && !data.user.email_confirmed_at) {
+        // 이메일 발송됨 → 성공 페이지
+        router.push("/auth/sign-up-success")
+      } else if (data.session) {
+        // 이미 인증된 상태 (이메일 확인 비활성화) → 바로 대시보드
+        router.push("/protected")
+      } else {
+        // 예상치 못한 상태 (중복 이메일 등 silent failure)
+        throw new Error(
+          "회원가입을 처리할 수 없습니다. 이미 가입된 이메일일 수 있습니다.",
+        )
+      }
     } catch (error: unknown) {
       let errorMessage = "오류가 발생했습니다"
       if (error instanceof Error) {

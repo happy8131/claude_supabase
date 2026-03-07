@@ -6,7 +6,10 @@ export const registerDriverSchema = z.object({
     .string()
     .min(1, "출발 지역은 필수입니다")
     .max(100, "출발 지역은 100자 이하여야 합니다"),
-  departureTime: z.string().datetime("유효한 시간이 필요합니다"),
+  departureTime: z
+    .string()
+    .min(1, "출발 시간은 필수입니다")
+    .regex(/^\d{2}:\d{2}$/, "HH:mm 형식이어야 합니다"),
   availableSeats: z
     .number()
     .int()

@@ -40,7 +40,7 @@ export async function approveMember(
     // 참여자 상태 업데이트
     const { error } = await supabase
       .from("event_members")
-      .update({ status: "approved" })
+      .update({ status: "joined" })
       .eq("event_id", eventId)
       .eq("user_id", memberId)
 

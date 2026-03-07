@@ -2,8 +2,10 @@
 
 import { Calendar, Copy, Edit2, MapPin, Trash2 } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { useState, useTransition } from "react"
 
+import { deleteEvent } from "@/app/protected/events/[eventId]/edit/actions"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 
@@ -20,6 +22,8 @@ interface EventHeaderProps {
 
 export function EventHeader({ event, isHost = false }: EventHeaderProps) {
   const [copied, setCopied] = useState(false)
+  const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   const handleCopyLink = () => {
     // 더미: 단순히 복사됨 표시
@@ -28,8 +32,22 @@ export function EventHeader({ event, isHost = false }: EventHeaderProps) {
   }
 
   const handleDelete = () => {
-    // TODO(Phase 4): 이벤트 삭제 Server Action 연결
-    console.log("Delete event:", event.id)
+    // 확인 대화상자
+    const confirmed = window.confirm(
+      "정말 이 모임을 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.",
+    )
+
+    if (!confirmed) return
+
+    startTransition(async () => {
+      const result = await deleteEvent(event.id)
+
+      if (result.success) {
+        router.push("/protected")
+      } else {
+        alert(`삭제 실패: ${result.message}`)
+      }
+    })
   }
 
   const statusConfig = {
@@ -38,7 +56,10 @@ export function EventHeader({ event, isHost = false }: EventHeaderProps) {
     cancelled: { label: "취소", variant: "destructive" as const },
   }
 
-  const config = statusConfig[event.status] || { label: "알 수 없음", variant: "outline" as const }
+  const config = statusConfig[event.status] || {
+    label: "알 수 없음",
+    variant: "outline" as const,
+  }
 
   return (
     <div className="border-b pb-6 space-y-4">
@@ -94,10 +115,11 @@ export function EventHeader({ event, isHost = false }: EventHeaderProps) {
               variant="destructive"
               size="sm"
               onClick={handleDelete}
+              disabled={isPending}
               className="gap-2"
             >
               <Trash2 className="w-4 h-4" />
-              삭제
+              {isPending ? "삭제 중..." : "삭제"}
             </Button>
           </>
         )}

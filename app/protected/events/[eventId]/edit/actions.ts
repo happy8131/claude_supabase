@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache"
 
-import { createClient } from "@/lib/supabase/server"
 import { eventFormSchema } from "@/lib/schemas/events"
+import { createClient } from "@/lib/supabase/server"
 
 export type ActionResult<T = unknown> = {
   success: boolean
@@ -106,6 +106,12 @@ export async function updateEvent(
     ) {
       try {
         const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}`
+        console.log(
+          "이미지 업로드 시작:",
+          fileName,
+          validated.data.coverImageFile.type,
+        )
+
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from("event-covers")
           .upload(fileName, validated.data.coverImageFile, {
@@ -116,10 +122,16 @@ export async function updateEvent(
         if (uploadError) {
           console.error("이미지 업로드 오류:", uploadError)
         } else {
-          const {
-            data: { publicUrl },
-          } = supabase.storage.from("event-covers").getPublicUrl(fileName)
-          coverImageUrl = publicUrl
+          console.log("이미지 업로드 성공:", uploadData)
+          const publicUrlResult = supabase.storage
+            .from("event-covers")
+            .getPublicUrl(fileName)
+          console.log("공개 URL 생성:", publicUrlResult)
+
+          if (publicUrlResult.data?.publicUrl) {
+            coverImageUrl = publicUrlResult.data.publicUrl
+            console.log("최종 이미지 URL:", coverImageUrl)
+          }
         }
       } catch (imgError) {
         console.error("이미지 처리 오류:", imgError)

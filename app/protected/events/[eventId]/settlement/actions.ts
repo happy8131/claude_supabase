@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache"
 
-import { createClient } from "@/lib/supabase/server"
 import { settlementItemSchema } from "@/lib/schemas/settlement"
+import { createClient } from "@/lib/supabase/server"
 
 export type ActionResult<T = unknown> = {
   success: boolean
@@ -43,6 +43,20 @@ export async function addSettlementItem(
       }
     }
 
+    // settlement에서 event_id 조회
+    const { data: settlement, error: settlementError } = await supabase
+      .from("settlements")
+      .select("event_id")
+      .eq("id", settlementId)
+      .single()
+
+    if (settlementError || !settlement) {
+      return {
+        success: false,
+        message: "정산을 찾을 수 없습니다",
+      }
+    }
+
     // 정산 항목 삽입
     const { data, error } = await supabase
       .from("settlement_items")
@@ -63,7 +77,7 @@ export async function addSettlementItem(
       }
     }
 
-    revalidatePath(`/protected/events`)
+    revalidatePath(`/protected/events/${settlement.event_id}/settlement`)
 
     return {
       success: true,
@@ -103,6 +117,17 @@ export async function deleteSettlementItem(
       return { success: false, message: "정산 항목을 찾을 수 없습니다" }
     }
 
+    // settlement에서 event_id 조회
+    const { data: settlement, error: settlementError } = await supabase
+      .from("settlements")
+      .select("event_id")
+      .eq("id", item.settlement_id)
+      .single()
+
+    if (settlementError || !settlement) {
+      return { success: false, message: "정산을 찾을 수 없습니다" }
+    }
+
     // 정산 항목 삭제
     const { error } = await supabase
       .from("settlement_items")
@@ -116,7 +141,7 @@ export async function deleteSettlementItem(
       }
     }
 
-    revalidatePath(`/protected/events`)
+    revalidatePath(`/protected/events/${settlement.event_id}/settlement`)
 
     return {
       success: true,
@@ -158,6 +183,17 @@ export async function markAsPaid(paymentId: string): Promise<ActionResult> {
       return { success: false, message: "권한이 없습니다" }
     }
 
+    // settlement에서 event_id 조회
+    const { data: settlement, error: settlementError } = await supabase
+      .from("settlements")
+      .select("event_id")
+      .eq("id", payment.settlement_id)
+      .single()
+
+    if (settlementError || !settlement) {
+      return { success: false, message: "정산을 찾을 수 없습니다" }
+    }
+
     // 결제 상태 업데이트
     const { error } = await supabase
       .from("settlement_payments")
@@ -171,7 +207,7 @@ export async function markAsPaid(paymentId: string): Promise<ActionResult> {
       }
     }
 
-    revalidatePath(`/protected/events`)
+    revalidatePath(`/protected/events/${settlement.event_id}/settlement`)
 
     return {
       success: true,

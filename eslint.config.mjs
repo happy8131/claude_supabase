@@ -12,7 +12,14 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   {
-    ignores: [".next/**", "node_modules/**", "public/**", "dist/**"],
+    ignores: [
+      ".next/**",
+      "node_modules/**",
+      "public/**",
+      "dist/**",
+      "e2e/**",
+      "playwright.config.ts",
+    ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   // Prettier 충돌 규칙 비활성화 (반드시 맨 마지막에)

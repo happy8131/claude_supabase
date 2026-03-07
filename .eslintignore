@@ -1,0 +1,6 @@
+e2e
+playwright.config.ts
+.next
+node_modules
+dist
+build

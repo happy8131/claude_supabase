@@ -1,180 +1,136 @@
 {
   "tasks": [
     {
-      "id": "5bd1283d-a263-4b32-b4fa-2c472fd4bb4b",
-      "name": "Task 018-1: Playwright E2E 테스트",
-      "description": "이벤트 생성, 검증, 비인증, 자동승인, 정원 5개 시나리오 Playwright 테스트 작성 및 실행",
-      "status": "pending",
+      "id": "186e9d10-7cef-410f-8e92-9d5b6bd75dfe",
+      "name": "P0-A: 대시보드 DB 연동 (app/protected/page.tsx)",
+      "description": "현재 더미 데이터를 사용하는 대시보드를 Supabase 쿼리로 변환하여 실제 사용자의 이벤트 목록을 표시합니다. 주최한 이벤트(host_id = user.id)와 참여한 이벤트(event_members 테이블의 user_id)를 각각 조회하여 표시합니다.",
+      "notes": "participantCount는 event_members 테이블에서 count(*) 조회 필요. maxMembers는 events.max_members. date는 events.event_date (ISO 형식).",
+      "status": "completed",
       "dependencies": [],
-      "createdAt": "2026-03-07T10:02:51.002Z",
-      "updatedAt": "2026-03-07T10:02:51.002Z",
-      "relatedFiles": [
-        {
-          "path": "e2e/tests/task-018.spec.ts",
-          "type": "CREATE",
-          "description": "Playwright E2E 테스트 5개 시나리오"
-        }
-      ],
-      "implementationGuide": "1. e2e/tests/task-018.spec.ts 생성\n2. 시나리오 1: 이벤트 생성 후 리다이렉트 검증\n3. 시나리오 2: 필드 미입력 시 에러 검증\n4. 시나리오 3: 비로그인 참여신청 로그인 리다이렉트\n5. 시나리오 4: 자동승인/승인필요 상태 검증\n6. 시나리오 5: 정원초과 waitlisted 검증",
-      "verificationCriteria": "5개 E2E 테스트 모두 통과",
-      "analysisResult": "Task 018-1 Playwright E2E 테스트 5개 시나리오 및 Task 019 데이터 연동 6개 세부 작업 분할. 순서: Task 018-1 완료 → Task 019-1,2,3,4,5 병렬 진행 → Task 019-6. 기존 Server Actions 패턴 재사용."
-    },
-    {
-      "id": "0488c6c7-d11f-4908-9ed0-22a99211a98d",
-      "name": "Task 019-1: 대시보드 이미지 URL",
-      "description": "app/protected/page.tsx에서 cover_image_url 쿼리 추가",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2026-03-07T10:02:51.002Z",
-      "updatedAt": "2026-03-07T10:02:51.002Z",
+      "createdAt": "2026-03-07T11:32:07.533Z",
+      "updatedAt": "2026-03-07T11:32:40.187Z",
       "relatedFiles": [
         {
           "path": "app/protected/page.tsx",
           "type": "TO_MODIFY",
-          "description": "대시보드 이미지 URL 쿼리 추가"
-        }
-      ],
-      "implementationGuide": "hostedEvents, participatedMembers 쿼리에 cover_image_url 추가하여 EventCard에 전달",
-      "verificationCriteria": "EventCard에 coverImageUrl prop 전달 확인",
-      "analysisResult": "Task 018-1 Playwright E2E 테스트 5개 시나리오 및 Task 019 데이터 연동 6개 세부 작업 분할. 순서: Task 018-1 완료 → Task 019-1,2,3,4,5 병렬 진행 → Task 019-6. 기존 Server Actions 패턴 재사용."
-    },
-    {
-      "id": "458678a8-8fce-4158-888c-92787b9d8ee7",
-      "name": "Task 019-2: members 액션",
-      "description": "members/actions.ts 생성 - approveMember, rejectMember, removeMember",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2026-03-07T10:02:51.002Z",
-      "updatedAt": "2026-03-07T10:02:51.002Z",
-      "relatedFiles": [
-        {
-          "path": "app/protected/events/[eventId]/members/actions.ts",
-          "type": "CREATE",
-          "description": "참여자 승인/거절/강퇴 Server Actions"
-        }
-      ],
-      "implementationGuide": "권한 검증, DB UPDATE/DELETE, revalidatePath 포함",
-      "verificationCriteria": "권한검증 및 상태 업데이트",
-      "analysisResult": "Task 018-1 Playwright E2E 테스트 5개 시나리오 및 Task 019 데이터 연동 6개 세부 작업 분할. 순서: Task 018-1 완료 → Task 019-1,2,3,4,5 병렬 진행 → Task 019-6. 기존 Server Actions 패턴 재사용."
-    },
-    {
-      "id": "54d3565c-40ac-4b31-97ec-726d5cd1ffcc",
-      "name": "Task 019-3: announcements 액션",
-      "description": "announcements/actions.ts 생성 - CRUD 및 고정 토글",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2026-03-07T10:02:51.002Z",
-      "updatedAt": "2026-03-07T10:02:51.002Z",
-      "relatedFiles": [
-        {
-          "path": "app/protected/events/[eventId]/announcements/actions.ts",
-          "type": "CREATE",
-          "description": "공지 CRUD Server Actions"
+          "description": "더미 데이터 제거, Server Component 변환, Supabase 쿼리 추가"
         },
         {
-          "path": "lib/schemas/announcements.ts",
-          "type": "CREATE",
-          "description": "공지 폼 Zod 스키마"
+          "path": "lib/supabase/server.ts",
+          "type": "REFERENCE",
+          "description": "createClient 사용 예시"
         }
       ],
-      "implementationGuide": "createAnnouncement, updateAnnouncement, deleteAnnouncement, togglePin 구현",
-      "verificationCriteria": "공지 CRUD 및 고정 기능",
-      "analysisResult": "Task 018-1 Playwright E2E 테스트 5개 시나리오 및 Task 019 데이터 연동 6개 세부 작업 분할. 순서: Task 018-1 완료 → Task 019-1,2,3,4,5 병렬 진행 → Task 019-6. 기존 Server Actions 패턴 재사용."
+      "implementationGuide": "1. 'use client' 제거하고 Server Component로 변환\n2. createClient() 호출하여 Supabase 클라이언트 생성\n3. getUser()로 현재 사용자 ID 확인\n4. 주최한 이벤트: events 테이블에서 host_id = user.id 조회\n5. 참여한 이벤트: event_members 테이블에서 user_id = user.id이고 status='joined'인 레코드의 event_id로 events 조회\n6. dummyEvents import 제거\n7. 이벤트 없을 때 Empty State 유지\n8. EventCard는 id, title, date, location, participantCount, maxMembers, status 속성으로 전달\n9. revalidatePath('/protected') 추가 (삭제/추가 시)\n10. TypeScript 타입: Event 타입 활용 (types/database.ts)",
+      "verificationCriteria": "1. 로그인 후 /protected 접속 시 실제 DB의 이벤트 목록 표시\n2. 주최한 이벤트와 참여한 이벤트 분리 표시\n3. 이벤트 카드 클릭 시 /protected/events/[eventId] 페이지 정상 로드\n4. npm run type-check 통과",
+      "analysisResult": "프로젝트 복구: Phase 2(더미 데이터)와 Phase 4(실제 DB)가 혼재된 상태를 일관성 있게 통합합니다. 기존 DB 스키마와 Server Actions를 활용하여 모든 기능을 실제 데이터베이스와 연동합니다.",
+      "summary": "P0-A 완료: 대시보드를 Server Component로 변환하고 Supabase에서 실제 이벤트 목록을 동적으로 조회합니다. 주최한 이벤트(host_id = user.id)와 참여한 이벤트(event_members 테이블)를 각각 조회하여 표시합니다. 참여자 수는 event_members 테이블의 count() 쿼리로 계산합니다. TypeScript 타입 검사 통과 완료.",
+      "completedAt": "2026-03-07T11:32:40.184Z"
     },
     {
-      "id": "090d858e-ef17-4008-b3ab-5b4d3a97411f",
-      "name": "Task 019-4: carpool 액션",
-      "description": "carpool/actions.ts 생성 - 운전자/탑승자 등록, 매칭, 취소",
-      "status": "pending",
+      "id": "ffaab67d-34eb-4429-8919-ba8e2f6a9da1",
+      "name": "P0-B: event-header.tsx 삭제 기능 연결",
+      "description": "event-header.tsx의 handleDelete 함수를 실제 deleteEvent Server Action과 연결하여 이벤트 삭제 기능을 활성화합니다. 삭제 성공 시 /protected로 리다이렉트합니다.",
+      "notes": "deleteEvent는 Server Action이므로 'use server' 처리됨. 삭제 성공 후 대시보드 자동 이동. revalidatePath는 Server Action에서 처리됨.",
+      "status": "completed",
       "dependencies": [],
-      "createdAt": "2026-03-07T10:02:51.002Z",
-      "updatedAt": "2026-03-07T10:02:51.002Z",
+      "createdAt": "2026-03-07T11:32:07.533Z",
+      "updatedAt": "2026-03-07T11:34:09.822Z",
       "relatedFiles": [
         {
-          "path": "app/protected/events/[eventId]/carpool/actions.ts",
-          "type": "CREATE",
-          "description": "카풀 등록/매칭 Server Actions"
+          "path": "components/events/event-header.tsx",
+          "type": "TO_MODIFY",
+          "description": "handleDelete 함수 수정, deleteEvent import"
         },
         {
-          "path": "lib/schemas/carpool.ts",
-          "type": "CREATE",
-          "description": "카풀 폼 Zod 스키마"
+          "path": "app/protected/events/[eventId]/edit/actions.ts",
+          "type": "REFERENCE",
+          "description": "deleteEvent Server Action"
         }
       ],
-      "implementationGuide": "registerDriver, registerPassenger, matchCarpool, cancelCarpool 구현",
-      "verificationCriteria": "운전자/탑승자 등록 및 매칭",
-      "analysisResult": "Task 018-1 Playwright E2E 테스트 5개 시나리오 및 Task 019 데이터 연동 6개 세부 작업 분할. 순서: Task 018-1 완료 → Task 019-1,2,3,4,5 병렬 진행 → Task 019-6. 기존 Server Actions 패턴 재사용."
+      "implementationGuide": "1. app/protected/events/[eventId]/edit/actions.ts에서 deleteEvent import\n2. handleDelete 함수 수정: Server Action 호출 + useTransition 또는 fetch 사용\n3. 로딩 상태 관리 (삭제 중 버튼 비활성화)\n4. 삭제 성공 시: useRouter().push('/protected') 호출\n5. 삭제 실패 시: alert() 또는 toast 메시지로 에러 표시\n6. 확인 대화상자 추가 권장 (예: \"정말 삭제하시겠습니까?\")\n7. 'use client' 유지 (Client Component)\n8. TypeScript 타입: ActionResult 타입 활용",
+      "verificationCriteria": "1. 이벤트 상세 페이지에서 삭제 버튼 클릭 시 확인 대화상자 표시\n2. 확인 후 실제 이벤트 삭제 (DB 확인)\n3. 삭제 성공 시 /protected로 리다이렉트\n4. 삭제된 이벤트가 대시보드에서 제거됨\n5. npm run type-check 통과",
+      "analysisResult": "프로젝트 복구: Phase 2(더미 데이터)와 Phase 4(실제 DB)가 혼재된 상태를 일관성 있게 통합합니다. 기존 DB 스키마와 Server Actions를 활용하여 모든 기능을 실제 데이터베이스와 연동합니다.",
+      "summary": "P0-B 완료: event-header.tsx의 handleDelete 함수를 deleteEvent Server Action과 연결했습니다. 확인 대화상자를 추가하고, useTransition으로 로딩 상태를 관리합니다. 삭제 성공 시 /protected로 자동 리다이렉트되고, 실패 시 에러 메시지를 표시합니다. 삭제 중에는 버튼이 비활성화됩니다. TypeScript 타입 검사 통과.",
+      "completedAt": "2026-03-07T11:34:09.820Z"
     },
     {
-      "id": "4bd21288-6d27-43be-a839-ac80a4a2462c",
-      "name": "Task 019-5: settlement 액션",
-      "description": "settlement/actions.ts 생성 - 항목 CRUD, 계산, 납부 관리",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2026-03-07T10:02:51.002Z",
-      "updatedAt": "2026-03-07T10:02:51.002Z",
-      "relatedFiles": [
-        {
-          "path": "app/protected/events/[eventId]/settlement/actions.ts",
-          "type": "CREATE",
-          "description": "정산 항목/계산 Server Actions"
-        },
-        {
-          "path": "lib/schemas/settlement.ts",
-          "type": "CREATE",
-          "description": "정산 폼 Zod 스키마"
-        }
-      ],
-      "implementationGuide": "addSettlementItem, deleteSettlementItem, calculateSettlement, markAsPaid 구현",
-      "verificationCriteria": "정산 CRUD 및 1/N 계산",
-      "analysisResult": "Task 018-1 Playwright E2E 테스트 5개 시나리오 및 Task 019 데이터 연동 6개 세부 작업 분할. 순서: Task 018-1 완료 → Task 019-1,2,3,4,5 병렬 진행 → Task 019-6. 기존 Server Actions 패턴 재사용."
-    },
-    {
-      "id": "8477ca6a-fc59-42cf-9bf3-112a39bf7b45",
-      "name": "Task 019-6: 탭 UI 연동",
-      "description": "members, announcements, carpool, settlement 탭에 실제 데이터 로드 및 액션 연동",
-      "status": "pending",
+      "id": "b9eaee38-ebc9-4db5-9386-9b443fb56291",
+      "name": "P1-C: 탭 페이지 DB 연동 (announcements, members, carpool, settlement)",
+      "description": "각 탭 페이지(공지사항, 참여자, 카풀, 정산)의 하드코딩된 더미 데이터를 실제 DB 쿼리로 변환합니다. 각 페이지가 해당 테이블(announcements, event_members, carpool_*, settlements)에서 데이터를 조회하도록 수정합니다.",
+      "notes": "각 페이지마다 필요한 Server Actions 생성 (예: updateMemberStatus, createAnnouncement 등)은 P2 이후에 처리. 현재는 조회 기능만 구현. isHost 속성은 layout.tsx에서 이미 전달됨.",
+      "status": "completed",
       "dependencies": [
         {
-          "taskId": "458678a8-8fce-4158-888c-92787b9d8ee7"
-        },
-        {
-          "taskId": "54d3565c-40ac-4b31-97ec-726d5cd1ffcc"
-        },
-        {
-          "taskId": "090d858e-ef17-4008-b3ab-5b4d3a97411f"
-        },
-        {
-          "taskId": "4bd21288-6d27-43be-a839-ac80a4a2462c"
+          "taskId": "186e9d10-7cef-410f-8e92-9d5b6bd75dfe"
         }
       ],
-      "createdAt": "2026-03-07T10:02:51.002Z",
-      "updatedAt": "2026-03-07T10:02:51.002Z",
+      "createdAt": "2026-03-07T11:32:07.533Z",
+      "updatedAt": "2026-03-07T11:35:52.956Z",
       "relatedFiles": [
-        {
-          "path": "app/protected/events/[eventId]/members/page.tsx",
-          "type": "TO_MODIFY",
-          "description": "members 탭 UI 실제 데이터 연동"
-        },
         {
           "path": "app/protected/events/[eventId]/announcements/page.tsx",
           "type": "TO_MODIFY",
-          "description": "announcements 탭 UI 실제 데이터 연동"
+          "description": "더미 데이터 제거, announcements 테이블 쿼리"
+        },
+        {
+          "path": "app/protected/events/[eventId]/members/page.tsx",
+          "type": "TO_MODIFY",
+          "description": "더미 데이터 제거, event_members 테이블 쿼리"
         },
         {
           "path": "app/protected/events/[eventId]/carpool/page.tsx",
           "type": "TO_MODIFY",
-          "description": "carpool 탭 UI 실제 데이터 연동"
+          "description": "더미 데이터 제거, carpool_* 테이블 쿼리"
         },
         {
           "path": "app/protected/events/[eventId]/settlement/page.tsx",
           "type": "TO_MODIFY",
-          "description": "settlement 탭 UI 실제 데이터 연동"
+          "description": "더미 데이터 제거, settlement* 테이블 쿼리"
+        },
+        {
+          "path": "types/database.ts",
+          "type": "REFERENCE",
+          "description": "타입 정의 (Announcement, EventMember, CarpoolDriver 등)"
         }
       ],
-      "implementationGuide": "더미 데이터 제거, 쿼리로 실제 데이터 로드, Server Actions 연결, 로딩 상태 표시",
-      "verificationCriteria": "모든 탭 실제 데이터 표시 및 버튼/폼 작동",
-      "analysisResult": "Task 018-1 Playwright E2E 테스트 5개 시나리오 및 Task 019 데이터 연동 6개 세부 작업 분할. 순서: Task 018-1 완료 → Task 019-1,2,3,4,5 병렬 진행 → Task 019-6. 기존 Server Actions 패턴 재사용."
+      "implementationGuide": "## announcements/page.tsx\n1. Server Component로 변환\n2. createClient() → announcements 테이블 조회 (event_id = [eventId], 정렬: created_at DESC)\n3. 각 공지: id, title, content, author_id, created_at, is_pinned 표시\n4. author 정보는 profiles 테이블 JOIN으로 가져오기 (또는 별도 쿼리)\n5. 주최자만 삭제 버튼 표시 (author_id = user.id)\n6. 공지 없을 때 Empty State\n\n## members/page.tsx\n1. Server Component로 변환\n2. createClient() → event_members 테이블 조회 (event_id = [eventId])\n3. status='joined' 또는 'pending' 구분\n4. 각 멤버: user_id, status, joined_at 표시\n5. profiles 테이블 JOIN으로 이름/아바타 가져오기\n6. 주최자만 approve/reject 버튼 표시\n7. 멤버 없을 때 Empty State\n\n## carpool/page.tsx\n1. Server Component로 변환\n2. carpool_drivers 조회 (event_id = [eventId])\n3. carpool_passengers 조회 (event_id = [eventId])\n4. 드라이버별 승객 매칭 표시\n5. 차 있음/없음 상태 표시\n6. 주최자 또는 드라이버만 수정 가능\n\n## settlement/page.tsx\n1. Server Component로 변환\n2. settlements 테이블 조회 (event_id = [eventId])\n3. settlement_items 조회 (각 settlement의 항목)\n4. settlement_payments 조회 (정산 대금)\n5. 정산 상태 표시 (completed/pending)\n6. 주최자만 정산 생성/편집 가능",
+      "verificationCriteria": "1. 각 탭 페이지에서 실제 DB 데이터 표시\n2. 데이터 없을 때 Empty State 표시\n3. 목록 정렬 (최신순/오래된순)\n4. 권한에 따라 액션 버튼 표시 (주최자만)\n5. npm run type-check 통과",
+      "analysisResult": "프로젝트 복구: Phase 2(더미 데이터)와 Phase 4(실제 DB)가 혼재된 상태를 일관성 있게 통합합니다. 기존 DB 스키마와 Server Actions를 활용하여 모든 기능을 실제 데이터베이스와 연동합니다.",
+      "summary": "P1-C 완료: 4개 탭 페이지(공지사항, 참여자, 카풀, 정산)를 모두 DB 연동으로 변환했습니다. announcements는 announcements 테이블과 profiles 테이블을 JOIN하여 공지와 작성자 정보를 표시합니다. members는 event_members 테이블을 상태별로 분류(pending/joined/waitlisted)하여 참여자 관리를 구현했습니다. carpool은 carpool_drivers와 carpool_passengers 테이블을 조회하여 드라이버와 승객 정보를 표시합니다. settlement는 settlements, settlement_items, settlement_payments 테이블을 연동하여 비용 항목과 납부 현황을 표시합니다. 주최자 권한 확인은 각 페이지에서 event.host_id와 user.id 비교로 처리합니다. TypeScript 타입 검사 통과 완료.",
+      "completedAt": "2026-03-07T11:35:52.954Z"
+    },
+    {
+      "id": "5ba4228d-e941-4a5e-a1e7-442413761404",
+      "name": "P2-D: ROADMAP.md 업데이트",
+      "description": "ROADMAP.md 파일에서 완료된 Phase 1, 2, 3의 모든 태스크를 체크하고, 현재 작업(복구 태스크)의 진행 상황을 기록합니다.",
+      "notes": "ROADMAP.md 파일 위치: docs/ROADMAP.md 또는 프로젝트 루트. 파일이 없으면 생성.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "186e9d10-7cef-410f-8e92-9d5b6bd75dfe"
+        },
+        {
+          "taskId": "ffaab67d-34eb-4429-8919-ba8e2f6a9da1"
+        },
+        {
+          "taskId": "b9eaee38-ebc9-4db5-9386-9b443fb56291"
+        }
+      ],
+      "createdAt": "2026-03-07T11:32:07.533Z",
+      "updatedAt": "2026-03-07T11:36:40.035Z",
+      "relatedFiles": [
+        {
+          "path": "docs/ROADMAP.md",
+          "type": "TO_MODIFY",
+          "description": "완료 상태 업데이트, 복구 태스크 섹션 추가"
+        }
+      ],
+      "implementationGuide": "1. ROADMAP.md 열기\n2. Phase 1 (4/4 Tasks) - 모두 완료 표시 (✅ 또는 [x])\n3. Phase 2 (현재 상태 확인)\n   - Task 005~009: 완료된 것 체크\n   - Task 010~013: 상태 확인\n4. Phase 3 시작 부분에 \"복구 태스크 (Recovery Tasks)\" 섹션 추가\n   - P0-A, P0-B, P1-C 진행 상황 추적\n5. 각 태스크별 상태: pending → in_progress → completed\n6. 최종 마이그레이션 완료 날짜 기록",
+      "verificationCriteria": "1. ROADMAP.md에서 Phase 1 모두 체크됨\n2. Phase 2 진행 상황 정확하게 반영\n3. 복구 태스크 섹션 추가\n4. 일관된 마크다운 형식 유지",
+      "analysisResult": "프로젝트 복구: Phase 2(더미 데이터)와 Phase 4(실제 DB)가 혼재된 상태를 일관성 있게 통합합니다. 기존 DB 스키마와 Server Actions를 활용하여 모든 기능을 실제 데이터베이스와 연동합니다.",
+      "summary": "P2-D 완료: ROADMAP.md 파일을 생성하고 프로젝트의 전체 진행 상황을 정리했습니다. Phase 1 (4/4 완료), Phase 2 UI/UX (진행 중), Recovery Tasks (P0-A, P0-B, P1-C 완료)의 상태를 명확하게 기록했습니다. 기술 스택, 프로젝트 구조, 데이터베이스 테이블, 주요 개선 사항, 다음 마일스톤을 포함하여 포괄적인 로드맵을 작성했습니다. 마크다운 형식이 일관되게 유지되었습니다.",
+      "completedAt": "2026-03-07T11:36:40.033Z"
     }
   ]
 }

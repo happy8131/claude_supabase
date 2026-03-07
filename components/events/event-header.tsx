@@ -6,10 +6,15 @@ import { useState } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Event } from "@/lib/dummy-data"
 
 interface EventHeaderProps {
-  event: Event
+  event: {
+    id: string
+    title: string
+    date: string
+    location: string
+    status: "published" | "completed" | "cancelled"
+  }
   isHost?: boolean
 }
 
@@ -28,12 +33,12 @@ export function EventHeader({ event, isHost = false }: EventHeaderProps) {
   }
 
   const statusConfig = {
-    scheduled: { label: "예정", variant: "default" as const },
+    published: { label: "진행중", variant: "default" as const },
     completed: { label: "완료", variant: "secondary" as const },
     cancelled: { label: "취소", variant: "destructive" as const },
   }
 
-  const config = statusConfig[event.status]
+  const config = statusConfig[event.status] || { label: "알 수 없음", variant: "outline" as const }
 
   return (
     <div className="border-b pb-6 space-y-4">

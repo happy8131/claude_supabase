@@ -12,7 +12,8 @@ interface EventCardProps {
   location: string
   participantCount: number
   maxMembers?: number
-  status: "scheduled" | "completed" | "cancelled"
+  status: "published" | "completed" | "cancelled"
+  coverImageUrl?: string
 }
 
 export function EventCard({
@@ -23,15 +24,16 @@ export function EventCard({
   participantCount,
   maxMembers,
   status,
+  coverImageUrl,
 }: EventCardProps) {
   // 상태별 배지 색상
   const statusConfig = {
-    scheduled: { label: "예정", variant: "default" as const },
+    published: { label: "진행중", variant: "default" as const },
     completed: { label: "완료", variant: "secondary" as const },
     cancelled: { label: "취소", variant: "destructive" as const },
   }
 
-  const config = statusConfig[status]
+  const config = statusConfig[status] || { label: "알 수 없음", variant: "outline" as const }
 
   // 날짜 포맷 (ISO → 한국어)
   const formattedDate = new Date(date).toLocaleDateString("ko-KR", {
@@ -43,8 +45,20 @@ export function EventCard({
 
   return (
     <Link href={`/protected/events/${id}`}>
-      <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
-        <div className="space-y-3">
+      <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+        {/* 커버 이미지 또는 회색 배경 */}
+        <div className="w-full h-40 bg-gradient-to-br from-gray-200 to-gray-300 overflow-hidden">
+          {coverImageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={coverImageUrl}
+              alt={title}
+              className="w-full h-full object-cover"
+            />
+          ) : null}
+        </div>
+
+        <div className="p-4 space-y-3">
           {/* 제목 및 상태 배지 */}
           <div className="flex items-start justify-between gap-2">
             <h3 className="font-semibold text-sm line-clamp-2 flex-1">

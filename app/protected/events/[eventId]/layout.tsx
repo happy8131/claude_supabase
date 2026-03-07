@@ -1,6 +1,6 @@
 import { EventHeader } from "@/components/events/event-header"
 import { EventTabNavigation } from "@/components/events/event-tab-navigation"
-import { dummyEvents } from "@/lib/dummy-data"
+import { createClient } from "@/lib/supabase/server"
 
 interface EventLayoutProps {
   children: React.ReactNode
@@ -15,12 +15,19 @@ export default async function EventLayout({
 }: EventLayoutProps) {
   const { eventId } = await params
 
-  // eventId에 해당하는 이벤트 찾기
-  const hostedEvent = dummyEvents.hostedEvents.find((e) => e.id === eventId)
-  const participatedEvent = dummyEvents.participatedEvents.find(
-    (e) => e.id === eventId,
-  )
-  const event = hostedEvent || participatedEvent
+  const supabase = await createClient()
+
+  // 현재 사용자 확인
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  // 이벤트 조회
+  const { data: event } = await supabase
+    .from("events")
+    .select("*")
+    .eq("id", eventId)
+    .single()
 
   if (!event) {
     return (
@@ -33,12 +40,24 @@ export default async function EventLayout({
     )
   }
 
-  // 주최자 여부 판단 (호스트 이벤트 목록에 있으면 주최자)
-  const isHost = !!hostedEvent
+  // 주최자 여부 판단
+  const isHost = event.host_id === user?.id
+
+  // EventHeader에 전달할 이벤트 형식으로 변환
+  const eventData = {
+    id: event.id,
+    title: event.title,
+    description: event.description,
+    date: event.event_date,
+    location: event.location,
+    maxMembers: event.max_members,
+    status: event.status as "published" | "completed" | "cancelled",
+    coverImageUrl: event.cover_image_url,
+  }
 
   return (
     <div className="space-y-6">
-      <EventHeader event={event} isHost={isHost} />
+      <EventHeader event={eventData} isHost={isHost} />
       <EventTabNavigation eventId={eventId} isHost={isHost} />
       {children}
     </div>

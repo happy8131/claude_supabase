@@ -1,0 +1,31 @@
+{
+  "tasks": [
+    {
+      "id": "e26876ec-859a-4898-acfc-3ce4cb61d8c9",
+      "name": "EventCardSkeleton 컴포넌트 생성",
+      "description": "이미지 로딩 중 표시할 Skeleton 컴포넌트 작성. EventCard와 동일한 크기 및 구조의 로딩 상태 표시. 전체 UI 구조를 skeleton으로 대체하여 CLS 방지. Tailwind animate-pulse 사용. EventCard와 함께 재사용 가능하도록 설계.",
+      "notes": "로딩 중인 3개 항목 렌더링 시 사용할 수 있도록 재사용성 고려. Tailwind의 bg-gray-200, animate-pulse 활용.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-03-05T16:31:16.202Z",
+      "updatedAt": "2026-03-05T16:32:35.234Z",
+      "relatedFiles": [
+        {
+          "path": "components/ui/card.tsx",
+          "type": "REFERENCE",
+          "description": "Card 컴포넌트 참고"
+        },
+        {
+          "path": "components/events/event-card.tsx",
+          "type": "REFERENCE",
+          "description": "EventCard 구조 참고"
+        }
+      ],
+      "implementationGuide": "1. components/events/event-card-skeleton.tsx 파일 생성\n2. Skeleton UI: 300x200px 이미지 placeholder + 텍스트 줄 3개\n3. animate-pulse로 부드러운 로딩 효과\n4. EventCard와 동일한 Card 래퍼 사용\n5. 내보내기: export function EventCardSkeleton()",
+      "verificationCriteria": "1. 파일 생성 완료\n2. EventCard와 동일한 높이/너비 유지\n3. animate-pulse 효과 표시\n4. TypeScript 타입 안정성 검증\n5. Prettier/ESLint 통과",
+      "analysisResult": "이미지 표시 기능 구현 시 다음 원칙 준수: (1) Next.js Image 컴포넌트 사용으로 자동 최적화, (2) 16:9 aspect ratio 고정으로 레이아웃 시프트 방지, (3) blur placeholder와 fallback 이미지 제공, (4) lucide-react Image 아이콘으로 플레이스홀더, (5) Tailwind CSS로 모든 스타일링, (6) 기존 EventCard 구조 유지하면서 상단에 이미지 추가, (7) 로딩 상태 skeleton 컴포넌트 생성 및 재사용, (8) 타입 안정성을 위해 모든 props에 타입 정의",
+      "summary": "EventCardSkeleton 컴포넌트를 components/events/event-card-skeleton.tsx에 생성 완료. Card 래퍼, 300x200px 이미지 placeholder, 3개 텍스트 줄, animate-pulse 효과 모두 포함. EventCard와 동일한 구조 유지하여 레이아웃 시프트 방지. TypeScript 타입 안정성 검증 완료.",
+      "completedAt": "2026-03-05T16:32:35.232Z"
+    }
+  ]
+}

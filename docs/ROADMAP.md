@@ -464,7 +464,7 @@ proxy.ts                                        # 공개 경로 설정 (Task 001
 | Phase 3 | Task 015 | Supabase 테이블 마이그레이션         | 미완료 |
 | Phase 3 | Task 016 | RLS 정책 설정                        | 미완료 |
 | Phase 3 | Task 017 | TypeScript 타입 업데이트             | 미완료 |
-| Phase 4 | Task 018 | 이벤트 생성/수정/참여 Server Actions | 미완료 |
+| Phase 4 | Task 018 | 이벤트 생성/수정/참여 Server Actions | ✅ 구현 완료 (테스트 대기) |
 | Phase 4 | Task 019 | 모든 탭 데이터 연동                  | 미완료 |
 | Phase 4 | Task 020 | 프로필 & UX 개선                     | 미완료 |
 

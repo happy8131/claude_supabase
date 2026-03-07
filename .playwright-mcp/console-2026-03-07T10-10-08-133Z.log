@@ -1,0 +1,2 @@
+[   30254ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://unrmdohfyssunyaqggwf.supabase.co/auth/v1/signup?redirect_to=http%3A%2F%2Flocalhost%3A3000%2Fprotected:0
+[   41282ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://unrmdohfyssunyaqggwf.supabase.co/auth/v1/signup?redirect_to=http%3A%2F%2Flocalhost%3A3000%2Fprotected:0

@@ -203,6 +203,7 @@ export type Database = {
       }
       events: {
         Row: {
+          cover_image_url: string | null
           created_at: string | null
           description: string | null
           event_date: string
@@ -216,6 +217,7 @@ export type Database = {
           title: string
         }
         Insert: {
+          cover_image_url?: string | null
           created_at?: string | null
           description?: string | null
           event_date: string
@@ -229,6 +231,7 @@ export type Database = {
           title: string
         }
         Update: {
+          cover_image_url?: string | null
           created_at?: string | null
           description?: string | null
           event_date?: string
@@ -421,7 +424,10 @@ export type Database = {
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+type DefaultSchema = DatabaseWithoutInternals[Extract<
+  keyof Database,
+  "public"
+>]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
@@ -433,9 +439,7 @@ export type Tables<
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
       DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
@@ -461,9 +465,7 @@ export type TablesInsert<
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
@@ -486,9 +488,7 @@ export type TablesUpdate<
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
@@ -511,9 +511,7 @@ export type Enums<
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
@@ -528,9 +526,7 @@ export type CompositeTypes<
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
-}
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof DatabaseWithoutInternals }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
@@ -542,30 +538,15 @@ export const Constants = {
   },
 } as const
 
-// 편의 타입 alias
+// 편의용 타입 exports
 export type Profile = Tables<"profiles">
+export type ProfileInsert = TablesInsert<"profiles">
 export type ProfileUpdate = TablesUpdate<"profiles">
+
 export type Event = Tables<"events">
 export type EventInsert = TablesInsert<"events">
 export type EventUpdate = TablesUpdate<"events">
+
 export type EventMember = Tables<"event_members">
 export type EventMemberInsert = TablesInsert<"event_members">
 export type EventMemberUpdate = TablesUpdate<"event_members">
-export type Announcement = Tables<"announcements">
-export type AnnouncementInsert = TablesInsert<"announcements">
-export type AnnouncementUpdate = TablesUpdate<"announcements">
-export type CarpoolDriver = Tables<"carpool_drivers">
-export type CarpoolDriverInsert = TablesInsert<"carpool_drivers">
-export type CarpoolDriverUpdate = TablesUpdate<"carpool_drivers">
-export type CarpoolPassenger = Tables<"carpool_passengers">
-export type CarpoolPassengerInsert = TablesInsert<"carpool_passengers">
-export type CarpoolPassengerUpdate = TablesUpdate<"carpool_passengers">
-export type Settlement = Tables<"settlements">
-export type SettlementInsert = TablesInsert<"settlements">
-export type SettlementUpdate = TablesUpdate<"settlements">
-export type SettlementItem = Tables<"settlement_items">
-export type SettlementItemInsert = TablesInsert<"settlement_items">
-export type SettlementItemUpdate = TablesUpdate<"settlement_items">
-export type SettlementPayment = Tables<"settlement_payments">
-export type SettlementPaymentInsert = TablesInsert<"settlement_payments">
-export type SettlementPaymentUpdate = TablesUpdate<"settlement_payments">

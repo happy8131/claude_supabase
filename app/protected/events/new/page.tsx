@@ -1,7 +1,5 @@
-import Link from "next/link"
-
 import { EventForm } from "@/components/events/event-form"
-import { Button } from "@/components/ui/button"
+import { createEvent } from "./actions"
 
 export default function NewEventPage() {
   return (
@@ -16,7 +14,7 @@ export default function NewEventPage() {
 
       {/* 폼 컨테이너 */}
       <div className="max-w-2xl mx-auto border rounded-lg p-6">
-        <EventForm />
+        <EventForm action="create" formAction={createEvent} />
       </div>
     </div>
   )

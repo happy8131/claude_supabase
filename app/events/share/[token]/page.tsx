@@ -1,30 +1,108 @@
+"use client"
+
+import { useActionState, useEffect, useState } from "react"
 import Link from "next/link"
+import { useParams } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { dummyEvents } from "@/lib/dummy-data"
+import { createClient } from "@/lib/supabase/client"
 import { Calendar, MapPin, Users } from "lucide-react"
+import { applyToEvent } from "./actions"
 
-interface ShareEventPageProps {
-  params: {
-    token: string
-  }
-}
+export default function ShareEventPage() {
+  const params = useParams()
+  const token = params.token as string
+  const [event, setEvent] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-export default function ShareEventPage({ params }: ShareEventPageProps) {
-  // 더미 데이터에서 첫 번째 호스트 이벤트 사용
-  const event = dummyEvents.hostedEvents[0]
+  // 이벤트 데이터 로드
+  useEffect(() => {
+    const loadEvent = async () => {
+      try {
+        const supabase = createClient()
+        const { data, error: fetchError } = await supabase
+          .from("events")
+          .select(
+            `
+            id,
+            title,
+            description,
+            event_date,
+            location,
+            max_members,
+            event_members(count)
+          `,
+          )
+          .eq("share_token", token)
+          .single()
 
-  if (!event) {
-    return <div className="text-center py-12">이벤트를 찾을 수 없습니다.</div>
-  }
+        if (fetchError) {
+          setError("이벤트를 찾을 수 없습니다.")
+          return
+        }
 
-  // 상태별 버튼 렌더링 (더미: 참여 가능 상태)
-  const renderButton = () => {
+        setEvent({
+          id: data.id,
+          title: data.title,
+          description: data.description,
+          date: data.event_date,
+          location: data.location,
+          maxMembers: data.max_members,
+          participantCount: data.event_members?.[0]?.count || 0,
+        })
+      } catch (err) {
+        setError("이벤트 로드 중 오류가 발생했습니다.")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadEvent()
+  }, [token])
+
+  // 참여 신청 액션 상태 관리
+  const [applyState, applyAction, isApplying] = useActionState(
+    () => applyToEvent(token),
+    { success: false, message: "" },
+  )
+
+  if (isLoading) {
     return (
-      <Button size="lg" className="w-full">
-        참여 신청
-      </Button>
+      <main className="min-h-screen flex flex-col items-center bg-background">
+        <div className="w-full flex justify-center border-b">
+          <div className="w-full max-w-5xl px-5 h-16 flex items-center">
+            <Link href="/" className="font-semibold text-base">
+              모임 이벤트 관리
+            </Link>
+          </div>
+        </div>
+        <div className="flex-1 flex justify-center w-full">
+          <div className="w-full max-w-2xl px-5 py-12 text-center">
+            로드 중...
+          </div>
+        </div>
+      </main>
+    )
+  }
+
+  if (error || !event) {
+    return (
+      <main className="min-h-screen flex flex-col items-center bg-background">
+        <div className="w-full flex justify-center border-b">
+          <div className="w-full max-w-5xl px-5 h-16 flex items-center">
+            <Link href="/" className="font-semibold text-base">
+              모임 이벤트 관리
+            </Link>
+          </div>
+        </div>
+        <div className="flex-1 flex justify-center w-full">
+          <div className="w-full max-w-2xl px-5 py-12 text-center text-red-500">
+            {error}
+          </div>
+        </div>
+      </main>
     )
   }
 
@@ -76,13 +154,26 @@ export default function ShareEventPage({ params }: ShareEventPageProps) {
             {/* 설명 */}
             <div className="pt-4 border-t">
               <p className="text-muted-foreground leading-relaxed">
-                이 모임은 주기적으로 열리는 즐거운 시간입니다. 함께 참여하고
-                싶으신 분들은 언제든지 신청해주세요!
+                {event.description ||
+                  "이 모임은 주기적으로 열리는 즐거운 시간입니다. 함께 참여하고싶으신 분들은 언제든지 신청해주세요!"}
               </p>
             </div>
 
+            {/* 에러 메시지 */}
+            {applyState?.message && !applyState.success && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                {applyState.message}
+              </div>
+            )}
+
             {/* CTA 버튼 */}
-            <div className="pt-6 space-y-3">{renderButton()}</div>
+            <div className="pt-6 space-y-3">
+              <form action={applyAction}>
+                <Button size="lg" className="w-full" disabled={isApplying}>
+                  {isApplying ? "처리 중..." : "참여 신청"}
+                </Button>
+              </form>
+            </div>
           </Card>
         </div>
       </div>

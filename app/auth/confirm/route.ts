@@ -8,24 +8,42 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const token_hash = searchParams.get("token_hash")
   const type = searchParams.get("type") as EmailOtpType | null
+  const code = searchParams.get("code")
   const next = searchParams.get("next") ?? "/protected"
 
-  if (token_hash && type) {
-    const supabase = await createClient()
+  const supabase = await createClient()
 
+  // 새 버전: token_hash + type 파라미터
+  if (token_hash && type) {
     const { error } = await supabase.auth.verifyOtp({
       type,
       token_hash,
     })
     if (!error) {
-      // redirect user to specified redirect URL or root of app
       redirect(next)
     } else {
-      // redirect the user to an error page with some instructions
-      redirect(`/auth/error?error=${error?.message}`)
+      redirect(
+        `/auth/error?error=${encodeURIComponent(error?.message || "Verification failed")}`,
+      )
     }
   }
 
-  // redirect the user to an error page with some instructions
-  redirect(`/auth/error?error=No token hash or type`)
+  // 구 버전 또는 대체: code 파라미터
+  if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    if (!error) {
+      redirect(next)
+    } else {
+      redirect(
+        `/auth/error?error=${encodeURIComponent(error?.message || "Verification failed")}`,
+      )
+    }
+  }
+
+  // 둘 다 없으면 오류
+  redirect(
+    `/auth/error?error=${encodeURIComponent(
+      "No verification token or code provided",
+    )}`,
+  )
 }

@@ -1,23 +1,46 @@
-import {
-  Calendar,
-  Calendar as CalendarIcon,
-  Edit2,
-  LogOut,
-  Mail,
-  MapPin,
-  Users,
-} from "lucide-react"
+import { Calendar, Mail, Users } from "lucide-react"
+import { redirect } from "next/navigation"
 
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { dummyProfile } from "@/lib/dummy-data"
+import { createClient } from "@/lib/supabase/server"
 
-export default function ProfilePage() {
-  // TODO(Phase 4): Supabase 인증 정보로 실제 프로필 데이터 조회
-  const profile = dummyProfile
+import { ProfileEditSection } from "./profile-edit-section"
 
-  const joinDate = new Date(profile.joinedDate).toLocaleDateString("ko-KR", {
+export default async function ProfilePage() {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user?.id) {
+    redirect("/auth/login")
+  }
+
+  // 프로필 조회
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single()
+
+  // 주최한 이벤트 수
+  const { count: hostedCount } = await supabase
+    .from("events")
+    .select("id", { count: "exact", head: true })
+    .eq("host_id", user.id)
+
+  // 참여한 이벤트 수 (status = 'joined')
+  const { count: joinedCount } = await supabase
+    .from("event_members")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .eq("status", "joined")
+
+  const joinDate = new Date(
+    profile?.created_at || new Date(),
+  ).toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -34,19 +57,14 @@ export default function ProfilePage() {
           {/* 기본 정보 */}
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <h1 className="text-3xl font-bold">{profile.displayName}</h1>
-              <p className="text-muted-foreground mt-1">{profile.bio}</p>
+              <h1 className="text-3xl font-bold">
+                {profile?.full_name || "미설정"}
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                {profile?.bio || "자기소개가 없습니다"}
+              </p>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="gap-2">
-                <Edit2 className="w-4 h-4" />
-                <span className="hidden sm:inline">수정</span>
-              </Button>
-              <Button variant="ghost" size="sm" className="gap-2">
-                <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">로그아웃</span>
-              </Button>
-            </div>
+            <ProfileEditSection profile={profile} />
           </div>
 
           {/* 상세 정보 */}
@@ -56,33 +74,17 @@ export default function ProfilePage() {
               <Mail className="w-5 h-5 text-muted-foreground" />
               <div>
                 <p className="text-xs text-muted-foreground">이메일</p>
-                <p className="font-medium">{profile.email}</p>
+                <p className="font-medium">{user.email}</p>
               </div>
             </div>
 
-            {/* 지역 */}
-            {profile.region && (
+            {/* 웹사이트 */}
+            {profile?.website && (
               <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-muted-foreground" />
                 <div>
-                  <p className="text-xs text-muted-foreground">지역</p>
-                  <p className="font-medium">{profile.region}</p>
-                </div>
-              </div>
-            )}
-
-            {/* 생년월일 */}
-            {profile.birthDate && (
-              <div className="flex items-center gap-3">
-                <CalendarIcon className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-xs text-muted-foreground">생년월일</p>
-                  <p className="font-medium">
-                    {new Date(profile.birthDate).toLocaleDateString("ko-KR", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                  <p className="text-xs text-muted-foreground">웹사이트</p>
+                  <p className="font-medium text-blue-600 hover:underline cursor-pointer">
+                    {profile.website}
                   </p>
                 </div>
               </div>
@@ -112,9 +114,7 @@ export default function ProfilePage() {
                     <p className="text-sm text-muted-foreground">
                       주최한 이벤트
                     </p>
-                    <p className="text-2xl font-bold">
-                      {profile.hostedEventCount}
-                    </p>
+                    <p className="text-2xl font-bold">{hostedCount || 0}</p>
                   </div>
                 </div>
               </Card>
@@ -129,9 +129,7 @@ export default function ProfilePage() {
                     <p className="text-sm text-muted-foreground">
                       참여한 이벤트
                     </p>
-                    <p className="text-2xl font-bold">
-                      {profile.participatedEventCount}
-                    </p>
+                    <p className="text-2xl font-bold">{joinedCount || 0}</p>
                   </div>
                 </div>
               </Card>
@@ -142,9 +140,15 @@ export default function ProfilePage() {
           <div className="pt-6 border-t">
             <h3 className="font-semibold mb-4">상태</h3>
             <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary">활동적인 주최자</Badge>
-              <Badge variant="outline">신뢰할 수 있는 회원</Badge>
-              <Badge>모임 애호가</Badge>
+              {hostedCount && hostedCount > 0 && (
+                <Badge variant="secondary">활동적인 주최자</Badge>
+              )}
+              {joinedCount && joinedCount > 0 && (
+                <Badge variant="outline">신뢰할 수 있는 회원</Badge>
+              )}
+              {(hostedCount || 0) + (joinedCount || 0) > 0 && (
+                <Badge>모임 애호가</Badge>
+              )}
             </div>
           </div>
         </div>
